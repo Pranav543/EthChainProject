@@ -44,16 +44,12 @@
 		"react-scripts": "^3.0.1",
 		"recompose": "^0.30.0",
 		"underscore": "^1.9.1",
-<<<<<<< HEAD
 		"validate.js": "^0.13.1",
 		"@maticnetwork/maticjs": "^2.0.0",
     	"@maticnetwork/meta": "^1.0.3",
     	"@maticnetwork/walletconnect-provider": "0.0.1-beta.1",
     	"maticjs": "^1.0.1",
     	"web3": "^1.2.9"
-=======
-		"validate.js": "^0.13.1"
->>>>>>> 802c9b134fdee7a462a050b363774abc7c10b076
 	},
 	"devDependencies": {
 		"eslint-plugin-prettier": "^3.0.1",
