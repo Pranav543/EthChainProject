@@ -21,6 +21,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+<<<<<<< HEAD
 async function Accounts(){
   let accounts = await window.web3.eth.getAccounts()
   return accounts[0];
@@ -38,15 +39,25 @@ const Profile = props => {
 
   console.log(account)
   
+=======
+const Profile = props => {
+  const { className, ...rest } = props;
+
+>>>>>>> 802c9b134fdee7a462a050b363774abc7c10b076
   const classes = useStyles();
 
   const user = {
     name: 'User',
     avatar: '',
+<<<<<<< HEAD
     bio: 'Account'
   };
   
   
+=======
+    bio: 'Account Address'
+  };
+>>>>>>> 802c9b134fdee7a462a050b363774abc7c10b076
 
   return (
     <div

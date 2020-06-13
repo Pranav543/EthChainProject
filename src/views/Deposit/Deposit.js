@@ -13,7 +13,10 @@ const useStyles = makeStyles(theme => ({
 const Settings = () => {
   const classes = useStyles();
 
+<<<<<<< HEAD
   
+=======
+>>>>>>> 802c9b134fdee7a462a050b363774abc7c10b076
   return (
     <div className={classes.root}>
       <Grid
