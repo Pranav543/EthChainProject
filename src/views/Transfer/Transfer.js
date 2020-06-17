@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Grid } from '@material-ui/core';
 
-import {  Deposit } from './components';
+import {  Transfer } from './components';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const Deposits = () => {
+const Transfers = () => {
   const classes = useStyles();
 
   return (
@@ -31,7 +31,7 @@ const Deposits = () => {
           md={8}
           xs={12}
         >
-          <Deposit />
+          <Transfer />
         </Grid>
         <Grid
           item
@@ -45,4 +45,4 @@ const Deposits = () => {
   );
 };
 
-export default Deposits;
+export default Transfers;

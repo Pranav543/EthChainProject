@@ -11,7 +11,7 @@ import {
   
   Account as AccountView,
   Deposit as DepositView,
-
+  Transfer as TransferView,
   NotFound as NotFoundView
 } from './views';
 
@@ -43,6 +43,12 @@ const Routes = () => {
         exact
         layout={MainLayout}
         path="/deposit"
+      />
+      <RouteWithLayout
+        component={TransferView}
+        exact
+        layout={MainLayout}
+        path="/transfer"
       />
      
       <RouteWithLayout

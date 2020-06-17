@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const Deposit = (props) => {
+const Transfer = (props) => {
 	const { className, ...rest } = props;
 
 	const classes = useStyles();
@@ -64,7 +64,7 @@ const Deposit = (props) => {
 	return (
 		<Card {...rest} className={clsx(classes.root, className)}>
 			<form>
-				<CardHeader subheader="Deposit to Matic Chain" title="Deposit" />
+				<CardHeader subheader="Transfer On Matic Chain" title="Transfer" />
 				<Divider />
 
 				<FormControl className={classes.formControl}>
@@ -86,7 +86,9 @@ const Deposit = (props) => {
 						<MenuItem value={'erc721'}>ERC721</MenuItem>
 					</Select>
 				</FormControl>
-
+				<CardContent>
+					<TextField fullWidth label="Transfer To" name="accoundid" variant="outlined" />
+				</CardContent>
 				{token === 'eth' && (
 					<div>
 						<CardContent>
@@ -96,7 +98,7 @@ const Deposit = (props) => {
 						<Divider />
 						<CardActions>
 							<Button color="primary" variant="outlined" onClick={random}>
-								Deposit
+								Transfer
 							</Button>
 							<Divider />
 							{loading && <CircularProgress />}
@@ -112,7 +114,7 @@ const Deposit = (props) => {
 						<Divider />
 						<CardActions>
 							<Button color="primary" variant="outlined" onClick={random}>
-								Deposit
+								Transfer
 							</Button>
 							<Divider />
 							{loading && <CircularProgress />}
@@ -128,7 +130,7 @@ const Deposit = (props) => {
 						<Divider />
 						<CardActions>
 							<Button color="primary" variant="outlined" onClick={random}>
-								Deposit
+								Transfer
 							</Button>
 							<Divider />
 							{loading && <CircularProgress />}
@@ -140,8 +142,8 @@ const Deposit = (props) => {
 	);
 };
 
-Deposit.propTypes = {
+Transfer.propTypes = {
 	className: PropTypes.string
 };
 
-export default Deposit;
+export default Transfer;

@@ -1,2 +1,2 @@
 
-export { default as Password } from './Deposit';
+export { default as Deposit } from './Deposit';
