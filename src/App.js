@@ -13,6 +13,10 @@ import validators from './common/validators';
 import Routes from './Routes';
 
 import Web3 from 'web3';
+const Network = require("@maticnetwork/meta/network");
+const Matic = require("@maticnetwork/maticjs");
+
+
 
 const browserHistory = createBrowserHistory();
 
@@ -21,6 +25,9 @@ validate.validators = {
   ...validate.validators,
   ...validators
 };
+
+
+
 
 export default class App extends Component {
   render() {
@@ -37,7 +44,19 @@ export default class App extends Component {
     } else {
       console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
     }
-    
+
+    const network = new Network("testnet", "v3");
+    const MainNetwork = network.Main;
+
+    window.matic = new Matic({
+      maticProvider: window.web3,
+      parentProvider: window.web3,
+      rootChain: MainNetwork.Contracts.RootChain,
+      withdrawManager: MainNetwork.Contracts.WithdrawManagerProxy,
+      depositManager: MainNetwork.Contracts.DepositManagerProxy,
+      registry: MainNetwork.Contracts.Registry
+    });
+
     return (
       <ThemeProvider theme={theme}>
         <Router history={browserHistory}>

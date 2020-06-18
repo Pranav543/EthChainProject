@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
@@ -29,6 +29,17 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
+const PromiseTimeout = async(delayms) => {
+	return new Promise(function(resolve, reject) {
+	  setTimeout(resolve, delayms);
+	});
+  }
+
+const Accounts = async () => {
+	const accounts = await window.web3.eth.getAccounts();
+	return accounts[0];
+};
+
 const Deposit = (props) => {
 	const { className, ...rest } = props;
 
@@ -36,18 +47,58 @@ const Deposit = (props) => {
 
 	let [ loading, changeloading ] = useState(false);
 
-	function random() {
+	const [ token, setToken ] = React.useState('');
+
+	const [ from, setFrom ] = useState([]);
+
+	const [ open, setOpen ] = React.useState(false);
+
+	const [ amount, setAmount ] = React.useState('');
+
+	useEffect(() => {
+		Accounts().then((result) => {
+			const account = result;
+			setFrom(account);
+		});
+	});
+
+
+	const deposit = async() => {
 		console.log(loading);
 		changeloading((prevState) => (loading = !prevState));
-		const a = 5,
-			b = 10;
-		const c = a * b;
-		console.log(c);
-		console.log(loading);
+		if(token==='eth'){
+			const a = window.web3.utils.toWei(amount,'ether')
+			const Ropsten_WEthAddress = "0x7BdDd37621186f1382FD59e1cCAE0316F979a866";
+			let token = Ropsten_WEthAddress;
+			await window.matic.depositEther(a, {from}).then( async logs => {
+				console.log("Deposit on Ropsten:" + logs.transactionHash);
+			})
+		}
+		else if(token==='erc20'){
+			const Ropsten_Erc20Address = "0x28C8713DDe7F063Fdc4cA01aB2A8856e0F243Fec";
+			let token = Ropsten_Erc20Address;
+			await window.matic.approveERC20TokensForDeposit(token, amount, {from}).then(async logs =>{
+				console.log("Approve on Ropsten:" + logs.transactionHash);
+				await PromiseTimeout(10000);
+				await window.matic.depositERC20ForUser(token, from, amount, {from}).then(async logs => {
+					console.log("Deposit on Ropsten:" + logs.transactionHash);
+				})
+			})
+		}
+		else if(token==='erc721'){
+			const Ropsten_Erc721Address = "0x07d799252cf13c01f602779b4dce24f4e5b08bbd"
+			let token = Ropsten_Erc721Address
+			const tokenId = "745"
+			await window.matic.safeDepositERC721Tokens(token, tokenId, {from}).then(async logs =>{
+				console.log("Deposit on Ropsten:" + logs.transactionHash);
+			})
+		}
 		changeloading((prevState) => (loading = !prevState));
 	}
-	const [ token, setToken ] = React.useState('');
-	const [ open, setOpen ] = React.useState(false);
+
+	const handleAmountChange = (event) => {
+        setAmount(event.target.value);
+    }
 
 	const handleChange = (event) => {
 		setToken(event.target.value);
@@ -90,12 +141,12 @@ const Deposit = (props) => {
 				{token === 'eth' && (
 					<div>
 						<CardContent>
-							<TextField fullWidth label="Amount in Ether" name="amount" variant="outlined" />
+							<TextField fullWidth label="Amount in Ether" name="amount" value={amount} onChange={handleAmountChange} variant="outlined" />
 						</CardContent>
 
 						<Divider />
 						<CardActions>
-							<Button color="primary" variant="outlined" onClick={random}>
+							<Button color="primary" variant="outlined" onClick={deposit}>
 								Deposit
 							</Button>
 							<Divider />
@@ -106,12 +157,12 @@ const Deposit = (props) => {
 				{token === 'erc20' && (
 					<div>
 						<CardContent>
-							<TextField fullWidth label="Amount" name="amount" variant="outlined" />
+							<TextField fullWidth label="Amount" name="amount" value={amount} onChange={handleAmountChange} variant="outlined" />
 						</CardContent>
 
 						<Divider />
 						<CardActions>
-							<Button color="primary" variant="outlined" onClick={random}>
+							<Button color="primary" variant="outlined" onClick={deposit}>
 								Deposit
 							</Button>
 							<Divider />
@@ -122,12 +173,12 @@ const Deposit = (props) => {
 				{token === 'erc721' && (
 					<div>
 						<CardContent>
-							<TextField fullWidth label="Amount" name="amount" variant="outlined" />
+							<TextField fullWidth label="Amount" name="amount" value={amount} onChange={handleAmountChange} variant="outlined" />
 						</CardContent>
 
 						<Divider />
 						<CardActions>
-							<Button color="primary" variant="outlined" onClick={random}>
+							<Button color="primary" variant="outlined" onClick={deposit}>
 								Deposit
 							</Button>
 							<Divider />
