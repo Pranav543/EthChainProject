@@ -16,6 +16,7 @@ import {
 	Select
 } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Alert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles((theme) => ({
 	root: {},
@@ -29,11 +30,11 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const PromiseTimeout = async(delayms) => {
+const PromiseTimeout = async (delayms) => {
 	return new Promise(function(resolve, reject) {
-	  setTimeout(resolve, delayms);
+		setTimeout(resolve, delayms);
 	});
-  }
+};
 
 const Accounts = async () => {
 	const accounts = await window.web3.eth.getAccounts();
@@ -47,13 +48,21 @@ const Deposit = (props) => {
 
 	let [ loading, changeloading ] = useState(false);
 
-	const [ token, setToken ] = React.useState('');
+	const [ token, setToken ] = useState('');
 
 	const [ from, setFrom ] = useState([]);
 
-	const [ open, setOpen ] = React.useState(false);
+	const [ open, setOpen ] = useState(false);
 
-	const [ amount, setAmount ] = React.useState('');
+	const [ amount, setAmount ] = useState('');
+
+	let [ txHash, settxHash ] = useState('');
+
+	const [ { ethError, erc20Error, erc721Error }, setError ] = useState({
+		ethError: '',
+		erc20Error: '',
+		erc721Error: ''
+	});
 
 	useEffect(() => {
 		Accounts().then((result) => {
@@ -62,43 +71,60 @@ const Deposit = (props) => {
 		});
 	});
 
+	const validate = () => {
+		let isError = false;
+		console.log(isNaN(Number(amount)));
+		if (isNaN(Number(amount))) {
+			isError = true;
+			setError((currentState) => ({ ...currentState, ethError: 'Enter Valid Input' }));
+		} else if (Number(amount) <= 0) {
+			isError = true;
+			setError((currentState) => ({ ...currentState, ethError: 'Enter Valid Input' }));
+		}
 
-	const deposit = async() => {
-		console.log(loading);
-		changeloading((prevState) => (loading = !prevState));
-		if(token==='eth'){
-			const a = window.web3.utils.toWei(amount,'ether')
-			const Ropsten_WEthAddress = "0x7BdDd37621186f1382FD59e1cCAE0316F979a866";
-			let token = Ropsten_WEthAddress;
-			await window.matic.depositEther(a, {from}).then( async logs => {
-				console.log("Deposit on Ropsten:" + logs.transactionHash);
-			})
+		return isError;
+	};
+
+	const deposit = async () => {
+		const err = validate();
+		if (err === false) {
+			setError((currentState) => ({ ...currentState, ethError: '' }));
+			changeloading((prevState) => (loading = !prevState));
+			if (token === 'eth') {
+				const a = window.web3.utils.toWei(amount, 'ether');
+				const Ropsten_WEthAddress = '0x7BdDd37621186f1382FD59e1cCAE0316F979a866';
+				let token = Ropsten_WEthAddress;
+				await window.matic.depositEther(a, { from }).then(async (logs) => {
+					console.log('Deposit on Ropsten:' + logs.transactionHash);
+					settxHash((txHash = logs.transactionHash));
+				});
+			} else if (token === 'erc20') {
+				const Ropsten_Erc20Address = '0x28C8713DDe7F063Fdc4cA01aB2A8856e0F243Fec';
+				let token = Ropsten_Erc20Address;
+				await window.matic.approveERC20TokensForDeposit(token, amount, { from }).then(async (logs) => {
+					console.log('Approve on Ropsten:' + logs.transactionHash);
+					await PromiseTimeout(10000);
+					await window.matic.depositERC20ForUser(token, from, amount, { from }).then(async (logs) => {
+						console.log('Deposit on Ropsten:' + logs.transactionHash);
+						settxHash((txHash = logs.transactionHash));
+					});
+				});
+			} else if (token === 'erc721') {
+				const Ropsten_Erc721Address = '0x07d799252cf13c01f602779b4dce24f4e5b08bbd';
+				let token = Ropsten_Erc721Address;
+				const tokenId = '745';
+				await window.matic.safeDepositERC721Tokens(token, tokenId, { from }).then(async (logs) => {
+					console.log('Deposit on Ropsten:' + logs.transactionHash);
+					settxHash((txHash = logs.transactionHash));
+				});
+			}
+			changeloading((prevState) => (loading = !prevState));
 		}
-		else if(token==='erc20'){
-			const Ropsten_Erc20Address = "0x28C8713DDe7F063Fdc4cA01aB2A8856e0F243Fec";
-			let token = Ropsten_Erc20Address;
-			await window.matic.approveERC20TokensForDeposit(token, amount, {from}).then(async logs =>{
-				console.log("Approve on Ropsten:" + logs.transactionHash);
-				await PromiseTimeout(10000);
-				await window.matic.depositERC20ForUser(token, from, amount, {from}).then(async logs => {
-					console.log("Deposit on Ropsten:" + logs.transactionHash);
-				})
-			})
-		}
-		else if(token==='erc721'){
-			const Ropsten_Erc721Address = "0x07d799252cf13c01f602779b4dce24f4e5b08bbd"
-			let token = Ropsten_Erc721Address
-			const tokenId = "745"
-			await window.matic.safeDepositERC721Tokens(token, tokenId, {from}).then(async logs =>{
-				console.log("Deposit on Ropsten:" + logs.transactionHash);
-			})
-		}
-		changeloading((prevState) => (loading = !prevState));
-	}
+	};
 
 	const handleAmountChange = (event) => {
-        setAmount(event.target.value);
-    }
+		setAmount(event.target.value);
+	};
 
 	const handleChange = (event) => {
 		setToken(event.target.value);
@@ -141,7 +167,16 @@ const Deposit = (props) => {
 				{token === 'eth' && (
 					<div>
 						<CardContent>
-							<TextField fullWidth label="Amount in Ether" name="amount" value={amount} onChange={handleAmountChange} variant="outlined" />
+							<TextField
+								fullWidth
+								label="Amount in Ether"
+								name="amount"
+								value={amount}
+								onChange={handleAmountChange}
+								variant="outlined"
+								id="outlined-error-helper-text"
+								helperText={ethError}
+							/>
 						</CardContent>
 
 						<Divider />
@@ -151,13 +186,34 @@ const Deposit = (props) => {
 							</Button>
 							<Divider />
 							{loading && <CircularProgress />}
+							<Divider />
+							{txHash !== '' && (
+								<Alert severity="success">
+									The transaction was a success! Check it out{' '}
+									<a
+										href={`https://ropsten.etherscan.io/tx/${txHash}`}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{txHash}
+									</a>
+								</Alert>
+							)}
 						</CardActions>
 					</div>
 				)}
 				{token === 'erc20' && (
 					<div>
 						<CardContent>
-							<TextField fullWidth label="Amount" name="amount" value={amount} onChange={handleAmountChange} variant="outlined" />
+							<TextField
+								fullWidth
+								label="Amount"
+								name="amount"
+								value={amount}
+								onChange={handleAmountChange}
+								variant="outlined"
+								errorText={erc20Error}
+							/>
 						</CardContent>
 
 						<Divider />
@@ -167,13 +223,34 @@ const Deposit = (props) => {
 							</Button>
 							<Divider />
 							{loading && <CircularProgress />}
+							<Divider />
+							{txHash !== '' && (
+								<Alert severity="success">
+									The transaction was a success! Check it out{' '}
+									<a
+										href={`https://ropsten.etherscan.io/tx/${txHash}`}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{txHash}
+									</a>
+								</Alert>
+							)}
 						</CardActions>
 					</div>
 				)}
 				{token === 'erc721' && (
 					<div>
 						<CardContent>
-							<TextField fullWidth label="Amount" name="amount" value={amount} onChange={handleAmountChange} variant="outlined" />
+							<TextField
+								fullWidth
+								label="Amount"
+								name="amount"
+								value={amount}
+								onChange={handleAmountChange}
+								variant="outlined"
+								errorText={erc721Error}
+							/>
 						</CardContent>
 
 						<Divider />
@@ -183,6 +260,19 @@ const Deposit = (props) => {
 							</Button>
 							<Divider />
 							{loading && <CircularProgress />}
+							<Divider />
+							{txHash !== '' && (
+								<Alert severity="success">
+									The transaction was a success! Check it out{' '}
+									<a
+										href={`https://ropsten.etherscan.io/tx/${txHash}`}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{txHash}
+									</a>
+								</Alert>
+							)}
 						</CardActions>
 					</div>
 				)}

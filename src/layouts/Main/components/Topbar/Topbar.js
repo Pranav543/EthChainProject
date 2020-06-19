@@ -6,54 +6,44 @@ import { makeStyles } from '@material-ui/styles';
 import { AppBar, Toolbar, Hidden, IconButton } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    boxShadow: 'none'
-  },
-  flexGrow: {
-    flexGrow: 1
-  },
-  signOutButton: {
-    marginLeft: theme.spacing(1)
-  }
+const useStyles = makeStyles((theme) => ({
+	root: {
+		boxShadow: 'none'
+	},
+	flexGrow: {
+		flexGrow: 1
+	},
+	signOutButton: {
+		marginLeft: theme.spacing(1)
+	}
 }));
 
-const Topbar = props => {
-  const { className, onSidebarOpen, ...rest } = props;
+const Topbar = (props) => {
+	const { className, onSidebarOpen, ...rest } = props;
 
-  const classes = useStyles();
+	const classes = useStyles();
 
-  
+	return (
+		<AppBar {...rest} className={clsx(classes.root, className)}>
+			<Toolbar>
+				<RouterLink to="/">
+					<h1 style={{ color: 'white' }}>EtherMen</h1>
+				</RouterLink>
+				<div className={classes.flexGrow} />
 
-  return (
-    <AppBar
-      {...rest}
-      className={clsx(classes.root, className)}
-    >
-      <Toolbar>
-        <RouterLink to="/">
-          
-          <h1 style={{color: 'white'}}>EtherMen</h1>
-        </RouterLink>
-        <div className={classes.flexGrow} />
-        
-        <Hidden lgUp>
-          <IconButton
-            color="inherit"
-            onClick={onSidebarOpen}
-          >
-            <MenuIcon />
-          </IconButton>
-        </Hidden>
-      </Toolbar>
-    </AppBar>
-  );
+				<Hidden lgUp>
+					<IconButton color="inherit" onClick={onSidebarOpen}>
+						<MenuIcon />
+					</IconButton>
+				</Hidden>
+			</Toolbar>
+		</AppBar>
+	);
 };
 
 Topbar.propTypes = {
-  className: PropTypes.string,
-  onSidebarOpen: PropTypes.func
+	className: PropTypes.string,
+	onSidebarOpen: PropTypes.func
 };
 
 export default Topbar;

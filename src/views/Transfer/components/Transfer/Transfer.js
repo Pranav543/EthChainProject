@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
@@ -16,6 +16,7 @@ import {
 	Select
 } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Alert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles((theme) => ({
 	root: {},
@@ -51,6 +52,8 @@ const Transfer = (props) => {
 
 	const [ TransferTo, setTransferTo ] = React.useState('');
 
+	let [ txHash, settxHash ] = React.useState('');
+
 	useEffect(() => {
 		Accounts().then((result) => {
 			const account = result;
@@ -58,43 +61,44 @@ const Transfer = (props) => {
 		});
 	});
 
-	const transfer = async() => {
+	const transfer = async () => {
 		console.log(loading);
 		changeloading((prevState) => (loading = !prevState));
-		if(token==='eth'){
-			const a = window.web3.utils.toWei(amount,'ether')
-			const Matic_WEthAddress = "0x8567184E6F9b1B77f24AfF6168453419AD22f90e";
+		if (token === 'eth') {
+			const a = window.web3.utils.toWei(amount, 'ether');
+			const Matic_WEthAddress = '0x8567184E6F9b1B77f24AfF6168453419AD22f90e';
 			let token = Matic_WEthAddress;
-			await window.matic.transferERC20Tokens(token, TransferTo, a, {from}).then( async logs => {
-				console.log("Transfer on Ropsten:" + logs.transactionHash);
-			})
-		}
-		else if(token==='erc20'){
-			const Matic_Erc20Address = "0x9a93c912F4eFf0254d178a18ACD980C1B05b57b0";
+			await window.matic.transferERC20Tokens(token, TransferTo, a, { from }).then(async (logs) => {
+				console.log('Transfer on Ropsten:' + logs.transactionHash);
+				settxHash((txHash = logs.transactionHash));
+			});
+		} else if (token === 'erc20') {
+			const Matic_Erc20Address = '0x9a93c912F4eFf0254d178a18ACD980C1B05b57b0';
 			let token = Matic_Erc20Address;
-			await window.matic.transferERC20Tokens(token, TransferTo, amount, {from}).then( async logs => {
-				console.log("Transfer on Ropsten:" + logs.transactionHash);
-			})
-		}
-		else if(token==='erc721'){
-			const Matic_Erc721Address = "0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5";
+			await window.matic.transferERC20Tokens(token, TransferTo, amount, { from }).then(async (logs) => {
+				console.log('Transfer on Ropsten:' + logs.transactionHash);
+				settxHash((txHash = logs.transactionHash));
+			});
+		} else if (token === 'erc721') {
+			const Matic_Erc721Address = '0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5';
 			let token = Matic_Erc721Address;
-			const tokenId = "746"
-			await window.matic.transferERC721Tokens(token, TransferTo, tokenId, {from}).then( async logs => {
-				console.log("Transfer on Ropsten:" + logs.transactionHash);
-			})
+			const tokenId = '746';
+			await window.matic.transferERC721Tokens(token, TransferTo, tokenId, { from }).then(async (logs) => {
+				console.log('Transfer on Ropsten:' + logs.transactionHash);
+				settxHash((txHash = logs.transactionHash));
+			});
 		}
 		console.log(loading);
 		changeloading((prevState) => (loading = !prevState));
-	}
+	};
 
 	const handleTransferChange = (event) => {
-        setTransferTo(event.target.value);
-    }
+		setTransferTo(event.target.value);
+	};
 
 	const handleAmountChange = (event) => {
-        setAmount(event.target.value);
-    }
+		setAmount(event.target.value);
+	};
 
 	const handleChange = (event) => {
 		setToken(event.target.value);
@@ -110,7 +114,7 @@ const Transfer = (props) => {
 
 	return (
 		<Card {...rest} className={clsx(classes.root, className)}>
-			<form>
+			
 				<CardHeader subheader="Transfer On Matic Chain" title="Transfer" />
 				<Divider />
 
@@ -134,12 +138,27 @@ const Transfer = (props) => {
 					</Select>
 				</FormControl>
 				<CardContent>
-					<TextField fullWidth label="Transfer To" name="accoundid" value={TransferTo} onChange={handleTransferChange} variant="outlined" />
+					<TextField
+						fullWidth
+						label="Transfer To"
+						name="accoundid"
+						value={TransferTo}
+						onChange={handleTransferChange}
+						variant="outlined"
+					/>
 				</CardContent>
 				{token === 'eth' && (
 					<div>
+						<form>
 						<CardContent>
-							<TextField fullWidth label="Amount in Ether" name="amount" value={amount} onChange={handleAmountChange} variant="outlined" />
+							<TextField
+								fullWidth
+								label="Amount in Ether"
+								name="amount"
+								value={amount}
+								onChange={handleAmountChange}
+								variant="outlined"
+							/>
 						</CardContent>
 
 						<Divider />
@@ -149,13 +168,35 @@ const Transfer = (props) => {
 							</Button>
 							<Divider />
 							{loading && <CircularProgress />}
+							<Divider />
+							{txHash !== '' && (
+								<Alert severity="success">
+									The transaction was a success! Check it out{' '}
+									<a
+										href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{txHash}
+									</a>
+								</Alert>
+							)}
 						</CardActions>
+						</form>
 					</div>
 				)}
 				{token === 'erc20' && (
 					<div>
+						<form>
 						<CardContent>
-							<TextField fullWidth label="Amount" name="amount" value={amount} onChange={handleAmountChange} variant="outlined" />
+							<TextField
+								fullWidth
+								label="Amount"
+								name="amount"
+								value={amount}
+								onChange={handleAmountChange}
+								variant="outlined"
+							/>
 						</CardContent>
 
 						<Divider />
@@ -165,13 +206,35 @@ const Transfer = (props) => {
 							</Button>
 							<Divider />
 							{loading && <CircularProgress />}
+							<Divider />
+							{txHash !== '' && (
+								<Alert severity="success">
+									The transaction was a success! Check it out{' '}
+									<a
+										href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{txHash}
+									</a>
+								</Alert>
+							)}
 						</CardActions>
+						</form>
 					</div>
 				)}
 				{token === 'erc721' && (
 					<div>
+						<form>
 						<CardContent>
-							<TextField fullWidth label="Amount" name="amount" value={amount} onChange={handleAmountChange} variant="outlined" />
+							<TextField
+								fullWidth
+								label="Amount"
+								name="amount"
+								value={amount}
+								onChange={handleAmountChange}
+								variant="outlined"
+							/>
 						</CardContent>
 
 						<Divider />
@@ -181,10 +244,24 @@ const Transfer = (props) => {
 							</Button>
 							<Divider />
 							{loading && <CircularProgress />}
+							<Divider />
+							{txHash !== '' && (
+								<Alert severity="success">
+									The transaction was a success! Check it out{' '}
+									<a
+										href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{txHash}
+									</a>
+								</Alert>
+							)}
 						</CardActions>
+						</form>
 					</div>
 				)}
-			</form>
+		
 		</Card>
 	);
 };
