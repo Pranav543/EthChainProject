@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
+import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import {
 	Card,
@@ -17,6 +18,7 @@ import {
 } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Alert from '@material-ui/lab/Alert';
+import { txComplete } from './../../../../actions';
 
 const useStyles = makeStyles((theme) => ({
 	root: {},
@@ -71,6 +73,7 @@ const Transfer = (props) => {
 			await window.matic.transferERC20Tokens(token, TransferTo, a, { from }).then(async (logs) => {
 				console.log('Transfer on Ropsten:' + logs.transactionHash);
 				settxHash((txHash = logs.transactionHash));
+				props.txComplete(txHash, 'Transfer', 'ETH');
 			});
 		} else if (token === 'erc20') {
 			const Matic_Erc20Address = '0x9a93c912F4eFf0254d178a18ACD980C1B05b57b0';
@@ -78,6 +81,7 @@ const Transfer = (props) => {
 			await window.matic.transferERC20Tokens(token, TransferTo, amount, { from }).then(async (logs) => {
 				console.log('Transfer on Ropsten:' + logs.transactionHash);
 				settxHash((txHash = logs.transactionHash));
+				props.txComplete(txHash, 'Transfer', 'ERC20');
 			});
 		} else if (token === 'erc721') {
 			const Matic_Erc721Address = '0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5';
@@ -86,6 +90,7 @@ const Transfer = (props) => {
 			await window.matic.transferERC721Tokens(token, TransferTo, tokenId, { from }).then(async (logs) => {
 				console.log('Transfer on Ropsten:' + logs.transactionHash);
 				settxHash((txHash = logs.transactionHash));
+				props.txComplete(txHash, 'Transfer', 'ERC721');
 			});
 		}
 		console.log(loading);
@@ -114,42 +119,41 @@ const Transfer = (props) => {
 
 	return (
 		<Card {...rest} className={clsx(classes.root, className)}>
-			
-				<CardHeader subheader="Transfer On Matic Chain" title="Transfer" />
-				<Divider />
+			<CardHeader subheader="Transfer On Matic Chain" title="Transfer" />
+			<Divider />
 
-				<FormControl className={classes.formControl}>
-					<InputLabel id="demo-controlled-open-select-label">Set Token</InputLabel>
-					<Select
-						labelId="demo-controlled-open-select-label"
-						id="demo-controlled-open-select"
-						open={open}
-						onClose={handleClose}
-						onOpen={handleOpen}
-						value={token}
-						onChange={handleChange}
-					>
-						<MenuItem value="">
-							<em>None</em>
-						</MenuItem>
-						<MenuItem value={'eth'}>Ether</MenuItem>
-						<MenuItem value={'erc20'}>ERC20</MenuItem>
-						<MenuItem value={'erc721'}>ERC721</MenuItem>
-					</Select>
-				</FormControl>
-				<CardContent>
-					<TextField
-						fullWidth
-						label="Transfer To"
-						name="accoundid"
-						value={TransferTo}
-						onChange={handleTransferChange}
-						variant="outlined"
-					/>
-				</CardContent>
-				{token === 'eth' && (
-					<div>
-						<form>
+			<FormControl className={classes.formControl}>
+				<InputLabel id="demo-controlled-open-select-label">Set Token</InputLabel>
+				<Select
+					labelId="demo-controlled-open-select-label"
+					id="demo-controlled-open-select"
+					open={open}
+					onClose={handleClose}
+					onOpen={handleOpen}
+					value={token}
+					onChange={handleChange}
+				>
+					<MenuItem value="">
+						<em>None</em>
+					</MenuItem>
+					<MenuItem value={'eth'}>Ether</MenuItem>
+					<MenuItem value={'erc20'}>ERC20</MenuItem>
+					<MenuItem value={'erc721'}>ERC721</MenuItem>
+				</Select>
+			</FormControl>
+			<CardContent>
+				<TextField
+					fullWidth
+					label="Transfer To"
+					name="accoundid"
+					value={TransferTo}
+					onChange={handleTransferChange}
+					variant="outlined"
+				/>
+			</CardContent>
+			{token === 'eth' && (
+				<div>
+					<form>
 						<CardContent>
 							<TextField
 								fullWidth
@@ -182,12 +186,12 @@ const Transfer = (props) => {
 								</Alert>
 							)}
 						</CardActions>
-						</form>
-					</div>
-				)}
-				{token === 'erc20' && (
-					<div>
-						<form>
+					</form>
+				</div>
+			)}
+			{token === 'erc20' && (
+				<div>
+					<form>
 						<CardContent>
 							<TextField
 								fullWidth
@@ -220,12 +224,12 @@ const Transfer = (props) => {
 								</Alert>
 							)}
 						</CardActions>
-						</form>
-					</div>
-				)}
-				{token === 'erc721' && (
-					<div>
-						<form>
+					</form>
+				</div>
+			)}
+			{token === 'erc721' && (
+				<div>
+					<form>
 						<CardContent>
 							<TextField
 								fullWidth
@@ -258,10 +262,9 @@ const Transfer = (props) => {
 								</Alert>
 							)}
 						</CardActions>
-						</form>
-					</div>
-				)}
-		
+					</form>
+				</div>
+			)}
 		</Card>
 	);
 };
@@ -270,4 +273,4 @@ Transfer.propTypes = {
 	className: PropTypes.string
 };
 
-export default Transfer;
+export default connect(null, { txComplete })(Transfer);

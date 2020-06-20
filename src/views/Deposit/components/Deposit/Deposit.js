@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
+import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import {
 	Card,
@@ -17,6 +18,7 @@ import {
 } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Alert from '@material-ui/lab/Alert';
+import { txComplete } from './../../../../actions';
 
 const useStyles = makeStyles((theme) => ({
 	root: {},
@@ -97,6 +99,7 @@ const Deposit = (props) => {
 				await window.matic.depositEther(a, { from }).then(async (logs) => {
 					console.log('Deposit on Ropsten:' + logs.transactionHash);
 					settxHash((txHash = logs.transactionHash));
+					props.txComplete(txHash, 'Deposit', 'ETH');
 				});
 			} else if (token === 'erc20') {
 				const Ropsten_Erc20Address = '0x28C8713DDe7F063Fdc4cA01aB2A8856e0F243Fec';
@@ -107,6 +110,7 @@ const Deposit = (props) => {
 					await window.matic.depositERC20ForUser(token, from, amount, { from }).then(async (logs) => {
 						console.log('Deposit on Ropsten:' + logs.transactionHash);
 						settxHash((txHash = logs.transactionHash));
+						props.txComplete(txHash, 'Deposit', 'ERC20');
 					});
 				});
 			} else if (token === 'erc721') {
@@ -116,6 +120,7 @@ const Deposit = (props) => {
 				await window.matic.safeDepositERC721Tokens(token, tokenId, { from }).then(async (logs) => {
 					console.log('Deposit on Ropsten:' + logs.transactionHash);
 					settxHash((txHash = logs.transactionHash));
+					props.txComplete(txHash, 'Deposit', 'ERC721');
 				});
 			}
 			changeloading((prevState) => (loading = !prevState));
@@ -285,4 +290,4 @@ Deposit.propTypes = {
 	className: PropTypes.string
 };
 
-export default Deposit;
+export default connect(null, { txComplete })(Deposit);
