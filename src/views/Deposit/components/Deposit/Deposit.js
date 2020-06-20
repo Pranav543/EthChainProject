@@ -102,7 +102,7 @@ const Deposit = (props) => {
 					props.txComplete(txHash, 'Deposit', 'ETH');
 				});
 			} else if (token === 'erc20') {
-				const Ropsten_Erc20Address = '0x28C8713DDe7F063Fdc4cA01aB2A8856e0F243Fec';
+				const Ropsten_Erc20Address = '0xEc5C207897C4378658F52bCCCE0ea648D1f17D65';
 				let token = Ropsten_Erc20Address;
 				await window.matic.approveERC20TokensForDeposit(token, amount, { from }).then(async (logs) => {
 					console.log('Approve on Ropsten:' + logs.transactionHash);
