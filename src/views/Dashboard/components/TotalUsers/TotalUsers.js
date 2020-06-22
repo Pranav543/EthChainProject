@@ -45,6 +45,10 @@ const TotalUsers = props => {
 
   const classes = useStyles();
 
+  window.web3.eth.net.getId().then((result)=>{
+    window.chainID = result
+  })
+
   return (
     <Card
       {...rest}
@@ -62,9 +66,9 @@ const TotalUsers = props => {
               gutterBottom
               variant="body2"
             >
-              TOTAL USERS
+              Chain ID
             </Typography>
-            <Typography variant="h3">1,600</Typography>
+          <Typography variant="h3">{window.chainID}</Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
@@ -72,21 +76,6 @@ const TotalUsers = props => {
             </Avatar>
           </Grid>
         </Grid>
-        <div className={classes.difference}>
-          <ArrowUpwardIcon className={classes.differenceIcon} />
-          <Typography
-            className={classes.differenceValue}
-            variant="body2"
-          >
-            16%
-          </Typography>
-          <Typography
-            className={classes.caption}
-            variant="caption"
-          >
-            Since last month
-          </Typography>
-        </div>
       </CardContent>
     </Card>
   );

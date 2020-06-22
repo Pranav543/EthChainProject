@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
@@ -40,10 +40,32 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const Accounts = async () => {
+	const accounts = await window.web3.eth.getAccounts();
+	return accounts[0];
+};
+
 const Budget = props => {
   const { className, ...rest } = props;
 
+  const [ amount, setAmount ] = useState("")
+
+  const [ from, setFrom ] = useState([]);
+
+  //let Matic_ERC721Address = "0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5"
+
   const classes = useStyles();
+
+  /*useEffect(() => {
+    Accounts().then((result) => {
+			const account = result;
+      setFrom(account);
+      window.matic.balanceOfERC721(from,Matic_ERC721Address,{from}).then((result)=>{
+        setAmount(result)
+      })
+		});
+  })*/
+
 
   return (
     <Card
@@ -62,9 +84,9 @@ const Budget = props => {
               gutterBottom
               variant="body2"
             >
-              BUDGET
+              ERC721 depositted
             </Typography>
-            <Typography variant="h3">$24,000</Typography>
+            <Typography variant="h3">{amount}</Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
@@ -72,21 +94,6 @@ const Budget = props => {
             </Avatar>
           </Grid>
         </Grid>
-        <div className={classes.difference}>
-          <ArrowDownwardIcon className={classes.differenceIcon} />
-          <Typography
-            className={classes.differenceValue}
-            variant="body2"
-          >
-            12%
-          </Typography>
-          <Typography
-            className={classes.caption}
-            variant="caption"
-          >
-            Since last month
-          </Typography>
-        </div>
       </CardContent>
     </Card>
   );

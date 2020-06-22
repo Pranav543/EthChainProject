@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
@@ -38,8 +38,30 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const Accounts = async () => {
+	const accounts = await window.web3.eth.getAccounts();
+	return accounts[0];
+};
+
 const TasksProgress = props => {
   const { className, ...rest } = props;
+
+  const [ amount, setAmount ] = useState(100)
+
+  const [ from, setFrom ] = useState([]);
+
+  /* let Matic_WEthAddress = "0x8567184E6F9b1B77f24AfF6168453419AD22f90e"
+
+  /useEffect(() => {
+    Accounts().then((result) => {
+			const account = result;
+      setFrom(account);
+      window.matic.balanceOfERC20(from,Matic_WEthAddress,{from}).then((result)=>{
+        setAmount(result)
+      })
+		});
+  }); */
+
 
   const classes = useStyles();
 
@@ -60,9 +82,9 @@ const TasksProgress = props => {
               gutterBottom
               variant="body2"
             >
-              TASKS PROGRESS
+              Ether depositted
             </Typography>
-            <Typography variant="h3">75.5%</Typography>
+            <Typography variant="h3">{amount}</Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
@@ -70,11 +92,6 @@ const TasksProgress = props => {
             </Avatar>
           </Grid>
         </Grid>
-        <LinearProgress
-          className={classes.progress}
-          value={75.5}
-          variant="determinate"
-        />
       </CardContent>
     </Card>
   );
