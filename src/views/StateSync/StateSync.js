@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Grid } from '@material-ui/core';
 
-import { AccountProfile, AccountDetails } from './components';
+import {  StateSync } from './components';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const Account = () => {
+const StateSyncs = () => {
   const classes = useStyles();
 
   return (
@@ -21,25 +21,28 @@ const Account = () => {
       >
         <Grid
           item
-          lg={4}
-          md={6}
-          xl={4}
+          md={2}
           xs={12}
         >
-          <AccountProfile />
+          
         </Grid>
         <Grid
           item
-          lg={8}
-          md={6}
-          xl={8}
+          md={8}
           xs={12}
         >
-          <AccountDetails />
+          <StateSync />
+        </Grid>
+        <Grid
+          item
+          md={2}
+          xs={12}
+        >
+          
         </Grid>
       </Grid>
     </div>
   );
 };
 
-export default Account;
+export default StateSyncs;

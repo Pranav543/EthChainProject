@@ -27,9 +27,8 @@ validate.validators = {
 };
 
 
-
-
 export default class App extends Component {
+
   render() {
     
     if (window.ethereum) {
@@ -45,6 +44,8 @@ export default class App extends Component {
       console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
     }
 
+    
+
     const network = new Network("testnet", "v3");
     const MainNetwork = network.Main;
 
@@ -56,6 +57,8 @@ export default class App extends Component {
       depositManager: MainNetwork.Contracts.DepositManagerProxy,
       registry: MainNetwork.Contracts.Registry
     });
+
+
 
     return (
       <ThemeProvider theme={theme}>

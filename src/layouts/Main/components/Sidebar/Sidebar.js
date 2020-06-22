@@ -10,6 +10,7 @@ import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import SyncAltIcon from '@material-ui/icons/SyncAlt';
 import ImportExportIcon from '@material-ui/icons/ImportExport';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { Profile, SidebarNav } from './components';
 
 const useStyles = makeStyles((theme) => ({
@@ -60,6 +61,11 @@ const Sidebar = (props) => {
 			title: 'Withdraw',
 			href: '/withdraw',
 			icon: <ImportExportIcon />
+		},
+		{
+			title: 'Upload',
+			href: '/upload',
+			icon: <CloudUploadIcon />
 		},
 		{
 			title: 'Transactions History',

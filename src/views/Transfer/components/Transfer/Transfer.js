@@ -76,7 +76,7 @@ const Transfer = (props) => {
 				props.txComplete(txHash, 'Transfer', 'ETH');
 			});
 		} else if (token === 'erc20') {
-			const Matic_Erc20Address = '0x9a93c912F4eFf0254d178a18ACD980C1B05b57b0';
+			const Matic_Erc20Address = '0xBc0AEe9f7b65fd3d8be30ba648e00dB5F734942b';
 			let token = Matic_Erc20Address;
 			await window.matic.transferERC20Tokens(token, TransferTo, amount, { from }).then(async (logs) => {
 				console.log('Transfer on Ropsten:' + logs.transactionHash);

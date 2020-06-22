@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
@@ -30,10 +30,33 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const Accounts = async () => {
+	const accounts = await window.web3.eth.getAccounts();
+	return accounts[0];
+};
+
 const TotalProfit = props => {
   const { className, ...rest } = props;
 
+  const [ amount, setAmount ] = useState("")
+
+  const [ from, setFrom ] = useState([]);
+
+  //let Matic_ERC20Address = "0xBc0AEe9f7b65fd3d8be30ba648e00dB5F734942b"
+
   const classes = useStyles();
+
+  /* useEffect(() => {
+    Accounts().then((result) => {
+			const account = result;
+      setFrom(account);
+      console.log(Matic_ERC20Address)
+      window.matic.balanceOfERC20(from,Matic_ERC20Address,{from,parent:false}).then((result)=>{
+        console.log(result)
+        setAmount(result)
+      })
+		});
+  }); */
 
   return (
     <Card
@@ -52,13 +75,13 @@ const TotalProfit = props => {
               gutterBottom
               variant="body2"
             >
-              TOTAL PROFIT
+              ERC20 depositted
             </Typography>
             <Typography
               color="inherit"
               variant="h3"
             >
-              $23,200
+              {amount}
             </Typography>
           </Grid>
           <Grid item>

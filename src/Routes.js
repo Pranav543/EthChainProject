@@ -6,14 +6,11 @@ import { Main as MainLayout } from './layouts';
 
 import {
   Dashboard as DashboardView,
-
-  
-  
-  Account as AccountView,
   Deposit as DepositView,
   Transfer as TransferView,
   Withdraw as WithdrawView,
-  NotFound as NotFoundView
+  NotFound as NotFoundView,
+  StateSync as StateSyncView
 } from './views';
 
 const Routes = () => {
@@ -31,14 +28,6 @@ const Routes = () => {
         path="/dashboard"
       />
       
-     
-      
-      <RouteWithLayout
-        component={AccountView}
-        exact
-        layout={MainLayout}
-        path="/account"
-      />
       <RouteWithLayout
         component={DepositView}
         exact
@@ -56,6 +45,13 @@ const Routes = () => {
         exact
         layout={MainLayout}
         path="/withdraw"
+      />
+
+      <RouteWithLayout
+        component={StateSyncView}
+        exact
+        layout={MainLayout}
+        path="/upload"
       />
      
       <RouteWithLayout
