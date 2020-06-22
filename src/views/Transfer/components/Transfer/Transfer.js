@@ -56,6 +56,14 @@ const Transfer = (props) => {
 
 	let [ txHash, settxHash ] = React.useState('');
 
+	const [ errorProp, isErrorProp ] = useState(false);
+
+	const [ { ethError, erc20Error, erc721Error }, setError ] = useState({
+		ethError: '',
+		erc20Error: '',
+		erc721Error: ''
+	});
+
 	useEffect(() => {
 		Accounts().then((result) => {
 			const account = result;
@@ -63,38 +71,80 @@ const Transfer = (props) => {
 		});
 	});
 
-	const transfer = async () => {
-		console.log(loading);
-		changeloading((prevState) => (loading = !prevState));
-		if (token === 'eth') {
-			const a = window.web3.utils.toWei(amount, 'ether');
-			const Matic_WEthAddress = '0x8567184E6F9b1B77f24AfF6168453419AD22f90e';
-			let token = Matic_WEthAddress;
-			await window.matic.transferERC20Tokens(token, TransferTo, a, { from }).then(async (logs) => {
-				console.log('Transfer on Ropsten:' + logs.transactionHash);
-				settxHash((txHash = logs.transactionHash));
-				props.txComplete(txHash, 'Transfer', 'ETH');
-			});
-		} else if (token === 'erc20') {
-			const Matic_Erc20Address = '0xBc0AEe9f7b65fd3d8be30ba648e00dB5F734942b';
-			let token = Matic_Erc20Address;
-			await window.matic.transferERC20Tokens(token, TransferTo, amount, { from }).then(async (logs) => {
-				console.log('Transfer on Ropsten:' + logs.transactionHash);
-				settxHash((txHash = logs.transactionHash));
-				props.txComplete(txHash, 'Transfer', 'ERC20');
-			});
-		} else if (token === 'erc721') {
-			const Matic_Erc721Address = '0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5';
-			let token = Matic_Erc721Address;
-			const tokenId = '746';
-			await window.matic.transferERC721Tokens(token, TransferTo, tokenId, { from }).then(async (logs) => {
-				console.log('Transfer on Ropsten:' + logs.transactionHash);
-				settxHash((txHash = logs.transactionHash));
-				props.txComplete(txHash, 'Transfer', 'ERC721');
-			});
+	const isNatural = (n) => {
+		return n > 0 && Math.floor(n) === +n;
+	};
+
+	const validate = () => {
+		let isError = false;
+		if (token === 'eth' && isNaN(Number(amount))) {
+			isError = true;
+			isErrorProp(true);
+			setError((currentState) => ({ ...currentState, ethError: 'Enter Valid Input' }));
 		}
-		console.log(loading);
-		changeloading((prevState) => (loading = !prevState));
+		if (token === 'eth' && Number(amount) <= 0) {
+			isError = true;
+			isErrorProp(true);
+			setError((currentState) => ({ ...currentState, ethError: 'Enter Valid Input' }));
+		}
+		if (token === 'erc20' && isNaN(Number(amount))) {
+			isError = true;
+			isErrorProp(true);
+			setError((currentState) => ({ ...currentState, erc20Error: 'Enter Valid Input' }));
+		}
+		if (token === 'erc20' && Number(amount) <= 0) {
+			isError = true;
+			isErrorProp(true);
+			setError((currentState) => ({ ...currentState, erc20Error: 'Enter Valid Input' }));
+		}
+		if (token === 'erc721' && isNatural(amount) === false) {
+			isError = true;
+			isErrorProp(true);
+			setError((currentState) => ({ ...currentState, erc721Error: 'Please Input Natural Number' }));
+		}
+
+		return isError;
+	};
+
+	const transfer = async () => {
+		const err = validate();
+		if (err === false) {
+			changeloading((prevState) => (loading = !prevState));
+			if (token === 'eth') {
+				setError((currentState) => ({ ...currentState, ethError: '' }));
+				isErrorProp(false);
+				const a = window.web3.utils.toWei(amount, 'ether');
+				const Matic_WEthAddress = '0x8567184E6F9b1B77f24AfF6168453419AD22f90e';
+				let token = Matic_WEthAddress;
+				await window.matic.transferERC20Tokens(token, TransferTo, a, { from }).then(async (logs) => {
+					console.log('Transfer on Ropsten:' + logs.transactionHash);
+					settxHash((txHash = logs.transactionHash));
+					props.txComplete(txHash, 'Transfer', 'ETH');
+				});
+			} else if (token === 'erc20') {
+				setError((currentState) => ({ ...currentState, erc20Error: '' }));
+				isErrorProp(false);
+				const Matic_Erc20Address = '0xBc0AEe9f7b65fd3d8be30ba648e00dB5F734942b';
+				let token = Matic_Erc20Address;
+				await window.matic.transferERC20Tokens(token, TransferTo, amount, { from }).then(async (logs) => {
+					console.log('Transfer on Ropsten:' + logs.transactionHash);
+					settxHash((txHash = logs.transactionHash));
+					props.txComplete(txHash, 'Transfer', 'ERC20');
+				});
+			} else if (token === 'erc721') {
+				setError((currentState) => ({ ...currentState, erc721Error: '' }));
+				isErrorProp(false);
+				const Matic_Erc721Address = '0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5';
+				let token = Matic_Erc721Address;
+				const tokenId = '746';
+				await window.matic.transferERC721Tokens(token, TransferTo, tokenId, { from }).then(async (logs) => {
+					console.log('Transfer on Ropsten:' + logs.transactionHash);
+					settxHash((txHash = logs.transactionHash));
+					props.txComplete(txHash, 'Transfer', 'ERC721');
+				});
+			}
+			changeloading((prevState) => (loading = !prevState));
+		}
 	};
 
 	const handleTransferChange = (event) => {
@@ -157,11 +207,14 @@ const Transfer = (props) => {
 						<CardContent>
 							<TextField
 								fullWidth
+								error={errorProp}
 								label="Amount in Ether"
 								name="amount"
 								value={amount}
 								onChange={handleAmountChange}
 								variant="outlined"
+								id="outlined-error-helper-text"
+								helperText={ethError}
 							/>
 						</CardContent>
 
@@ -195,11 +248,14 @@ const Transfer = (props) => {
 						<CardContent>
 							<TextField
 								fullWidth
+								error={errorProp}
 								label="Amount"
 								name="amount"
 								value={amount}
 								onChange={handleAmountChange}
 								variant="outlined"
+								id="outlined-error-helper-text"
+								helperText={erc20Error}
 							/>
 						</CardContent>
 
@@ -233,11 +289,14 @@ const Transfer = (props) => {
 						<CardContent>
 							<TextField
 								fullWidth
+								error={errorProp}
 								label="Amount"
 								name="amount"
 								value={amount}
 								onChange={handleAmountChange}
 								variant="outlined"
+								id="outlined-error-helper-text"
+								helperText={erc721Error}
 							/>
 						</CardContent>
 

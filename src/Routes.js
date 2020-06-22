@@ -10,7 +10,8 @@ import {
   Transfer as TransferView,
   Withdraw as WithdrawView,
   NotFound as NotFoundView,
-  StateSync as StateSyncView
+  StateSync as StateSyncView,
+  TranscHistory as TranscHistoryView
 } from './views';
 
 const Routes = () => {
@@ -52,6 +53,13 @@ const Routes = () => {
         exact
         layout={MainLayout}
         path="/upload"
+      />
+
+      <RouteWithLayout
+        component={TranscHistoryView}
+        exact
+        layout={MainLayout}
+        path="/history"
       />
      
       <RouteWithLayout

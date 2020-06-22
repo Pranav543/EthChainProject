@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
 import useInterval from '@use-it/interval';
-import LinearProgressWithLabel from './ProgressBar'
+import LinearProgressWithLabel from './ProgressBar';
 
 import { makeStyles } from '@material-ui/styles';
 import {
@@ -54,11 +54,19 @@ const Withdraw = (props) => {
 
 	const [ amount, setAmount ] = useState('');
 
-	let [ start, setStart ] = useState(false)
+	let [ start, setStart ] = useState(false);
 
-	let [ progress, setProgress ] = useState(0) 
+	let [ progress, setProgress ] = useState(0);
 
-	const [count, setCount] = useState(0);
+	const [ count, setCount ] = useState(0);
+
+	const [ errorProp, isErrorProp ] = useState(false);
+
+	const [ { ethError, erc20Error, erc721Error }, setError ] = useState({
+		ethError: '',
+		erc20Error: '',
+		erc721Error: ''
+	});
 
 	useEffect(() => {
 		Accounts().then((result) => {
@@ -67,83 +75,128 @@ const Withdraw = (props) => {
 		});
 	});
 
-	useInterval(() => {    
-		if(start){
-			setCount(count + 1)
-			if(parseInt((count*100)/360)>progress){
+	const isNatural = (n) => {
+		return n > 0 && Math.floor(n) === +n;
+	};
+
+	const validate = () => {
+		let isError = false;
+		if (token === 'eth' && isNaN(Number(amount))) {
+			isError = true;
+			isErrorProp(true);
+			setError((currentState) => ({ ...currentState, ethError: 'Enter Valid Input' }));
+		}
+		if (token === 'eth' && Number(amount) <= 0) {
+			isError = true;
+			isErrorProp(true);
+			setError((currentState) => ({ ...currentState, ethError: 'Enter Valid Input' }));
+		}
+		if (token === 'erc20' && isNaN(Number(amount))) {
+			isError = true;
+			isErrorProp(true);
+			setError((currentState) => ({ ...currentState, erc20Error: 'Enter Valid Input' }));
+		}
+		if (token === 'erc20' && Number(amount) <= 0) {
+			isError = true;
+			isErrorProp(true);
+			setError((currentState) => ({ ...currentState, erc20Error: 'Enter Valid Input' }));
+		}
+		if (token === 'erc721' && isNatural(amount) === false) {
+			isError = true;
+			isErrorProp(true);
+			setError((currentState) => ({ ...currentState, erc721Error: 'Please Input Natural Number' }));
+		}
+
+		return isError;
+	};
+
+	useInterval(() => {
+		if (start) {
+			setCount(count + 1);
+			if (parseInt(count * 100 / 360) > progress) {
 				setProgress(progress + 1);
 			}
-			if(count===360){
+			if (count === 360) {
 				setStart((prevState) => (start = !prevState));
 			}
-		}      
+		}
 	}, 1000);
 
 	const InitWithdraw = async () => {
-		changeloading((prevState) => (loading = !prevState));
-		let t = ""
-		if(token==='eth' || token==='erc20'){
-			if(token==='eth'){
-				t = "0x8567184E6F9b1B77f24AfF6168453419AD22f90e"
+		const err = validate();
+		if (err === false) {
+			changeloading((prevState) => (loading = !prevState));
+			let t = '';
+			if (token === 'eth' || token === 'erc20') {
+				setError((currentState) => ({ ...currentState, ethError: '', erc20Error: '' }));
+				isErrorProp(false);
+				if (token === 'eth') {
+					t = '0x8567184E6F9b1B77f24AfF6168453419AD22f90e';
+				} else {
+					t = '0xBc0AEe9f7b65fd3d8be30ba648e00dB5F734942b';
+				}
+				window.matic.startWithdraw(t, amount, { from }).then((logs) => props.txInProcess(logs.transactionHash));
+			} else if (token === 'erc721') {
+				setError((currentState) => ({ ...currentState, erc721Error: '' }));
+				isErrorProp(false);
+				const tokenId = '1';
+				t = '0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5';
+				window.matic
+					.startWithdrawForNFT(t, amount, { from })
+					.then((logs) => props.txInProcess(logs.transactionHash));
 			}
-			else{
-				t = "0xBc0AEe9f7b65fd3d8be30ba648e00dB5F734942b"
-			}
-			window.matic.startWithdraw(t, amount, {from}).then(logs => props.txInProcess(logs.transactionHash));
+			console.log('Done');
+			changeloading((prevState) => (loading = !prevState));
+			setStart((prevState) => (start = !prevState));
 		}
-		else if(token==='erc721'){
-			const tokenId = '1' 
-			t = "0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5"
-			window.matic.startWithdrawForNFT(t, amount, {from}).then(logs => props.txInProcess(logs.transactionHash));
-		}
-		console.log("Done")
-		changeloading((prevState) => (loading = !prevState));
-		setStart((prevState) => (start = !prevState));
 	};
 
-	const ConfWithdraw = async(transactionHash) => {
+	const ConfWithdraw = async (transactionHash) => {
 		let t;
-		if(token==='eth' || token==='erc20'){
-			if(token==='eth'){
-				window.matic.withdraw(transactionHash, {
-					from
-				 })
-				 .then(logs => {
-					console.log(logs.transactionHash)
-					t = "0x28C8713DDe7F063Fdc4cA01aB2A8856e0F243Fec"
-					window.matic.processExits(t,  {
+		if (token === 'eth' || token === 'erc20') {
+			if (token === 'eth') {
+				window.matic
+					.withdraw(transactionHash, {
 						from
-					 })
-					 .then(logs => console.log(logs.transactionHash));
-				 });
-			}
-			else{
-				window.matic.withdraw(transactionHash, {
-					from
-				 })
-				 .then(logs => {
-					console.log(logs.transactionHash)
-					t = "0xEc5C207897C4378658F52bCCCE0ea648D1f17D65"
-					window.matic.processExits(t,  {
+					})
+					.then((logs) => {
+						console.log(logs.transactionHash);
+						t = '0x28C8713DDe7F063Fdc4cA01aB2A8856e0F243Fec';
+						window.matic
+							.processExits(t, {
+								from
+							})
+							.then((logs) => console.log(logs.transactionHash));
+					});
+			} else {
+				window.matic
+					.withdraw(transactionHash, {
 						from
-					 })
-					 .then(logs => console.log(logs.transactionHash));
-				 })
+					})
+					.then((logs) => {
+						console.log(logs.transactionHash);
+						t = '0xEc5C207897C4378658F52bCCCE0ea648D1f17D65';
+						window.matic
+							.processExits(t, {
+								from
+							})
+							.then((logs) => console.log(logs.transactionHash));
+					});
 			}
-		}
-		else if(token==='erc721'){
-			window.matic.withdrawNFT(transactionHash, {from}).then(logs => {
-				console.log(logs.transactionHash)
-				t = "0x07d799252cf13c01f602779b4dce24f4e5b08bbd"
-				window.matic.processExits(t,  {
-					from
-				 })
-				 .then(logs => console.log(logs.transactionHash));
+		} else if (token === 'erc721') {
+			window.matic.withdrawNFT(transactionHash, { from }).then((logs) => {
+				console.log(logs.transactionHash);
+				t = '0x07d799252cf13c01f602779b4dce24f4e5b08bbd';
+				window.matic
+					.processExits(t, {
+						from
+					})
+					.then((logs) => console.log(logs.transactionHash));
 			});
 		}
-		props.txOutProcess()
-		console.log("Done")
-	}
+		props.txOutProcess();
+		console.log('Done');
+	};
 
 	const handleAmountChange = (event) => {
 		setAmount(event.target.value);
@@ -192,11 +245,14 @@ const Withdraw = (props) => {
 							<CardContent>
 								<TextField
 									fullWidth
+									error={errorProp}
 									label="Amount in Ether"
 									name="amount"
 									value={amount}
 									onChange={handleAmountChange}
 									variant="outlined"
+									id="outlined-error-helper-text"
+									helperText={ethError}
 								/>
 							</CardContent>
 
@@ -215,11 +271,14 @@ const Withdraw = (props) => {
 							<CardContent>
 								<TextField
 									fullWidth
+									error={errorProp}
 									label="Amount"
 									name="amount"
 									value={amount}
 									onChange={handleAmountChange}
 									variant="outlined"
+									id="outlined-error-helper-text"
+									helperText={erc20Error}
 								/>
 							</CardContent>
 
@@ -238,11 +297,14 @@ const Withdraw = (props) => {
 							<CardContent>
 								<TextField
 									fullWidth
+									error={errorProp}
 									label="Amount"
 									name="amount"
 									value={amount}
 									onChange={handleAmountChange}
 									variant="outlined"
+									id="outlined-error-helper-text"
+									helperText={erc721Error}
 								/>
 							</CardContent>
 
@@ -260,26 +322,23 @@ const Withdraw = (props) => {
 				</form>
 			</Card>
 		);
-	} 
-
-	else if(props.txProcess.length === 1 && start===true){
+	} else if (props.txProcess.length === 1 && start === true) {
 		return (
 			<div>
-			<Card {...rest} className={clsx(classes.root, className)}>
-				<form>
-					<CardHeader subheader="DO NOT CHANGE YOUR NETWORK UNTIL THE PROGRESS BAR IS FULL" title="Withdraw" />
-					<Divider />
-				</form>
-				
-			</Card>
-			
+				<Card {...rest} className={clsx(classes.root, className)}>
+					<form>
+						<CardHeader
+							subheader="DO NOT CHANGE YOUR NETWORK UNTIL THE PROGRESS BAR IS FULL"
+							title="Withdraw"
+						/>
+						<Divider />
+					</form>
+				</Card>
+
 				<LinearProgressWithLabel value={progress} />
 			</div>
 		);
-
-	}
-	
-	else if (props.txProcess.length === 1 && start===false) {
+	} else if (props.txProcess.length === 1 && start === false) {
 		return (
 			<Card {...rest} className={clsx(classes.root, className)}>
 				<form>
@@ -287,7 +346,11 @@ const Withdraw = (props) => {
 					<Divider />
 					<div>
 						<CardActions>
-							<Button color="primary" variant="outlined" onClick={ConfWithdraw(props.txProcess[0].txHash)}>
+							<Button
+								color="primary"
+								variant="outlined"
+								onClick={ConfWithdraw(props.txProcess[0].txHash)}
+							>
 								Confirm Withdraw
 							</Button>
 							<Divider />

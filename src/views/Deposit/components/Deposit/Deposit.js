@@ -60,6 +60,8 @@ const Deposit = (props) => {
 
 	let [ txHash, settxHash ] = useState('');
 
+	const [ errorProp, isErrorProp ] = useState(false);
+
 	const [ { ethError, erc20Error, erc721Error }, setError ] = useState({
 		ethError: '',
 		erc20Error: '',
@@ -73,15 +75,36 @@ const Deposit = (props) => {
 		});
 	});
 
+	const isNatural = (n) => {
+		return n > 0 && Math.floor(n) === +n;
+	};
+
 	const validate = () => {
 		let isError = false;
-		console.log(isNaN(Number(amount)));
-		if (isNaN(Number(amount))) {
+		if (token === 'eth' && isNaN(Number(amount))) {
 			isError = true;
+			isErrorProp(true);
 			setError((currentState) => ({ ...currentState, ethError: 'Enter Valid Input' }));
-		} else if (Number(amount) <= 0) {
+		}
+		if (token === 'eth' && Number(amount) <= 0) {
 			isError = true;
+			isErrorProp(true);
 			setError((currentState) => ({ ...currentState, ethError: 'Enter Valid Input' }));
+		}
+		if (token === 'erc20' && isNaN(Number(amount))) {
+			isError = true;
+			isErrorProp(true);
+			setError((currentState) => ({ ...currentState, erc20Error: 'Enter Valid Input' }));
+		}
+		if (token === 'erc20' && Number(amount) <= 0) {
+			isError = true;
+			isErrorProp(true);
+			setError((currentState) => ({ ...currentState, erc20Error: 'Enter Valid Input' }));
+		}
+		if (token === 'erc721' && isNatural(amount) === false) {
+			isError = true;
+			isErrorProp(true);
+			setError((currentState) => ({ ...currentState, erc721Error: 'Please Input Natural Number' }));
 		}
 
 		return isError;
@@ -90,9 +113,10 @@ const Deposit = (props) => {
 	const deposit = async () => {
 		const err = validate();
 		if (err === false) {
-			setError((currentState) => ({ ...currentState, ethError: '' }));
 			changeloading((prevState) => (loading = !prevState));
 			if (token === 'eth') {
+				setError((currentState) => ({ ...currentState, ethError: '' }));
+				isErrorProp(false);
 				const a = window.web3.utils.toWei(amount, 'ether');
 				const Ropsten_WEthAddress = '0x7BdDd37621186f1382FD59e1cCAE0316F979a866';
 				let token = Ropsten_WEthAddress;
@@ -102,6 +126,8 @@ const Deposit = (props) => {
 					props.txComplete(txHash, 'Deposit', 'ETH');
 				});
 			} else if (token === 'erc20') {
+				setError((currentState) => ({ ...currentState, erc20Error: '' }));
+				isErrorProp(false);
 				const Ropsten_Erc20Address = '0xEc5C207897C4378658F52bCCCE0ea648D1f17D65';
 				let token = Ropsten_Erc20Address;
 				await window.matic.approveERC20TokensForDeposit(token, amount, { from }).then(async (logs) => {
@@ -114,6 +140,8 @@ const Deposit = (props) => {
 					});
 				});
 			} else if (token === 'erc721') {
+				setError((currentState) => ({ ...currentState, erc721Error: '' }));
+				isErrorProp(false);
 				const Ropsten_Erc721Address = '0x07d799252cf13c01f602779b4dce24f4e5b08bbd';
 				let token = Ropsten_Erc721Address;
 				const tokenId = '745';
@@ -174,6 +202,7 @@ const Deposit = (props) => {
 						<CardContent>
 							<TextField
 								fullWidth
+								error={errorProp}
 								label="Amount in Ether"
 								name="amount"
 								value={amount}
@@ -212,12 +241,14 @@ const Deposit = (props) => {
 						<CardContent>
 							<TextField
 								fullWidth
+								error={errorProp}
 								label="Amount"
 								name="amount"
 								value={amount}
 								onChange={handleAmountChange}
 								variant="outlined"
-								errorText={erc20Error}
+								id="outlined-error-helper-text"
+								helperText={erc20Error}
 							/>
 						</CardContent>
 
@@ -249,12 +280,14 @@ const Deposit = (props) => {
 						<CardContent>
 							<TextField
 								fullWidth
+								error={errorProp}
 								label="Amount"
 								name="amount"
 								value={amount}
 								onChange={handleAmountChange}
 								variant="outlined"
-								errorText={erc721Error}
+								id="outlined-error-helper-text"
+								helperText={erc721Error}
 							/>
 						</CardContent>
 
