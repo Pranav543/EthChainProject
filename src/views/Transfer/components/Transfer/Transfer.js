@@ -223,22 +223,21 @@ const Transfer = (props) => {
 							<Button color="primary" variant="outlined" onClick={transfer}>
 								Transfer WETH
 							</Button>
-							<Divider />
+
 							{loading && <CircularProgress />}
-							<Divider />
-							{txHash !== '' && (
-								<Alert severity="success">
-									The transaction was a success! Check it out{' '}
-									<a
-										href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
-										target="_blank"
-										rel="noopener noreferrer"
-									>
-										{txHash}
-									</a>
-								</Alert>
-							)}
 						</CardActions>
+						{txHash !== '' && (
+							<Alert severity="success">
+								The transaction was a success! Check it out{' '}
+								<a
+									href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{txHash}
+								</a>
+							</Alert>
+						)}
 					</form>
 				</div>
 			)}
@@ -264,22 +263,22 @@ const Transfer = (props) => {
 							<Button color="primary" variant="outlined" onClick={transfer}>
 								Transfer ERC20
 							</Button>
-							<Divider />
+
 							{loading && <CircularProgress />}
-							<Divider />
-							{txHash !== '' && (
-								<Alert severity="success">
-									The transaction was a success! Check it out{' '}
-									<a
-										href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
-										target="_blank"
-										rel="noopener noreferrer"
-									>
-										{txHash}
-									</a>
-								</Alert>
-							)}
 						</CardActions>
+
+						{txHash !== '' && (
+							<Alert severity="success">
+								The transaction was a success! Check it out{' '}
+								<a
+									href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{txHash}
+								</a>
+							</Alert>
+						)}
 					</form>
 				</div>
 			)}
@@ -305,22 +304,21 @@ const Transfer = (props) => {
 							<Button color="primary" variant="outlined" onClick={transfer}>
 								Transfer ERC721
 							</Button>
-							<Divider />
+
 							{loading && <CircularProgress />}
-							<Divider />
-							{txHash !== '' && (
-								<Alert severity="success">
-									The transaction was a success! Check it out{' '}
-									<a
-										href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
-										target="_blank"
-										rel="noopener noreferrer"
-									>
-										{txHash}
-									</a>
-								</Alert>
-							)}
 						</CardActions>
+						{txHash !== '' && (
+							<Alert severity="success">
+								The transaction was a success! Check it out{' '}
+								<a
+									href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{txHash}
+								</a>
+							</Alert>
+						)}
 					</form>
 				</div>
 			)}

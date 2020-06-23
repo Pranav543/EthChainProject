@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import { DropzoneDialog } from 'material-ui-dropzone';
 import { Card, CardHeader, CardContent, Divider, Button } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 
 const bs58 = require('bs58');
 const IPFS = require('ipfs-api');
@@ -41,6 +42,8 @@ const StateSync = (props) => {
 
 	const [ file, handleSave ] = useState([]);
 
+	let [ txHash, settxHash ] = useState('');
+
 	const handleChange = async (file) => {
 		//Saving files to state for further use.
 		handleSave(file);
@@ -51,6 +54,7 @@ const StateSync = (props) => {
 		console.log(file_hex)
 		const transaction = await sender.methods.sendState(file_hex).send({from})
 		console.log(transaction.transactionHash)
+		settxHash((txHash = transaction.transactionHash));
 		setOpen(false);
 		console.log(file);
 	};
@@ -87,6 +91,19 @@ const StateSync = (props) => {
 					maxFileSize={50000000}
 					onClose={handleClose}
 				/>
+				<Divider />
+							{txHash !== '' && (
+								<Alert severity="success">
+									The transaction was a success! Check it out{' '}
+									<a
+										href={`https://ropsten.etherscan.io/tx/${txHash}`}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{txHash}
+									</a>
+								</Alert>
+							)}
 			</CardContent>
 		</Card>
 	);

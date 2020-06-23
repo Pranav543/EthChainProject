@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
@@ -45,9 +45,15 @@ const TotalUsers = props => {
 
   const classes = useStyles();
 
-  window.web3.eth.net.getId().then((result)=>{
-    window.chainID = result
-  })
+  useEffect(() => {
+		window.web3.eth.net.getId().then((result)=>{
+      window.chainID = result
+      // console.log(typeof(window.chainID))
+      // console.log(window.chainID)
+    })
+	});
+
+  
 
   return (
     <Card
@@ -68,7 +74,7 @@ const TotalUsers = props => {
             >
               Chain ID
             </Typography>
-          <Typography variant="h3">{window.chainID}</Typography>
+          {window.chainID >=0 && <Typography variant="h3">{window.chainID}</Typography>}
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>

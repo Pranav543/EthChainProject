@@ -11,6 +11,7 @@ import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import SyncAltIcon from '@material-ui/icons/SyncAlt';
 import ImportExportIcon from '@material-ui/icons/ImportExport';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 import { Profile, SidebarNav } from './components';
 
 const useStyles = makeStyles((theme) => ({
@@ -74,9 +75,9 @@ const Sidebar = (props) => {
 		},
 
 		{
-			title: 'Account',
-			href: '/account',
-			icon: <AccountBoxIcon />
+			title: 'UploadedFiles',
+			href: '/uploadedfiles',
+			icon: <FileCopyIcon />
 		}
 	];
 

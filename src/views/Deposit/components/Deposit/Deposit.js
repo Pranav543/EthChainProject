@@ -218,22 +218,21 @@ const Deposit = (props) => {
 							<Button color="primary" variant="outlined" onClick={deposit}>
 								Deposit
 							</Button>
-							<Divider />
+
 							{loading && <CircularProgress />}
-							<Divider />
-							{txHash !== '' && (
-								<Alert severity="success">
-									The transaction was a success! Check it out{' '}
-									<a
-										href={`https://ropsten.etherscan.io/tx/${txHash}`}
-										target="_blank"
-										rel="noopener noreferrer"
-									>
-										{txHash}
-									</a>
-								</Alert>
-							)}
 						</CardActions>
+						{txHash !== '' && (
+							<Alert severity="success">
+								The transaction was a success! Check it out{' '}
+								<a
+									href={`https://ropsten.etherscan.io/tx/${txHash}`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{txHash}
+								</a>
+							</Alert>
+						)}
 					</div>
 				)}
 				{token === 'erc20' && (
@@ -257,22 +256,21 @@ const Deposit = (props) => {
 							<Button color="primary" variant="outlined" onClick={deposit}>
 								Deposit
 							</Button>
-							<Divider />
+
 							{loading && <CircularProgress />}
-							<Divider />
-							{txHash !== '' && (
-								<Alert severity="success">
-									The transaction was a success! Check it out{' '}
-									<a
-										href={`https://ropsten.etherscan.io/tx/${txHash}`}
-										target="_blank"
-										rel="noopener noreferrer"
-									>
-										{txHash}
-									</a>
-								</Alert>
-							)}
 						</CardActions>
+						{txHash !== '' && (
+							<Alert severity="success">
+								The transaction was a success! Check it out{' '}
+								<a
+									href={`https://ropsten.etherscan.io/tx/${txHash}`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{txHash}
+								</a>
+							</Alert>
+						)}
 					</div>
 				)}
 				{token === 'erc721' && (
@@ -296,22 +294,20 @@ const Deposit = (props) => {
 							<Button color="primary" variant="outlined" onClick={deposit}>
 								Deposit
 							</Button>
-							<Divider />
 							{loading && <CircularProgress />}
-							<Divider />
-							{txHash !== '' && (
-								<Alert severity="success">
-									The transaction was a success! Check it out{' '}
-									<a
-										href={`https://ropsten.etherscan.io/tx/${txHash}`}
-										target="_blank"
-										rel="noopener noreferrer"
-									>
-										{txHash}
-									</a>
-								</Alert>
-							)}
 						</CardActions>
+						{txHash !== '' && (
+							<Alert severity="success">
+								The transaction was a success! Check it out{' '}
+								<a
+									href={`https://ropsten.etherscan.io/tx/${txHash}`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{txHash}
+								</a>
+							</Alert>
+						)}
 					</div>
 				)}
 			</form>

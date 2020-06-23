@@ -1,8 +1,8 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/styles';
-import {connect} from 'react-redux'
 
-import { TxTable } from './components';
+
+import { UploadedFilesData } from './components';
 
 
 const useStyles = makeStyles(theme => ({
@@ -14,25 +14,21 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const TranscHistory = (props) => {
+const UploadedFiles = (props) => {
   const classes = useStyles();
-  const {txHistory} = props.state
+  
   // console.log(txHistory)
 
 
   return (
     <div className={classes.root}>
       <div className={classes.content}>
-        <TxTable txHistory = {txHistory}/>
+        <UploadedFilesData />
       </div>
       </div>
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    state 
-  }
-}
 
-export default connect(mapStateToProps)(TranscHistory);
+
+export default UploadedFiles;
