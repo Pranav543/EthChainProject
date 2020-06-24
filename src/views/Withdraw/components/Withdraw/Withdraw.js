@@ -143,8 +143,10 @@ const Withdraw = (props) => {
 					t = '0xBc0AEe9f7b65fd3d8be30ba648e00dB5F734942b';
 				}
 				window.matic.startWithdraw(t, amount, { from }).then((logs) => {
-					props.txInProcess(logs.transactionHash);
+					
 					setInitxHash((initTxHash = logs.transactionHash));
+					props.txInProcess(initTxHash);
+
 					token === 'eth' && props.txComplete(initTxHash, 'Initial Withdraw', 'ETH');
 					token === 'erc20' && props.txComplete(initTxHash, 'Initial Withdraw', 'ERC20');
 				});
@@ -154,12 +156,14 @@ const Withdraw = (props) => {
 				const tokenId = '1';
 				t = '0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5';
 				window.matic.startWithdrawForNFT(t, amount, { from }).then((logs) => {
-					props.txInProcess(logs.transactionHash);
+					
 					setInitxHash((initTxHash = logs.transactionHash));
+					props.txInProcess(initTxHash);
 					props.txComplete(initTxHash, 'Initial Withdraw', 'ERC721');
 				});
 			}
 			console.log('Done');
+			// console.log(props.txProcess)
 			changeloading((prevState) => (loading = !prevState));
 			setStart((prevState) => (start = !prevState));
 		}
@@ -210,6 +214,7 @@ const Withdraw = (props) => {
 								setExitTxHash((exitTxHash = logs.transactionHash));
 								token === 'eth' && props.txComplete(exitTxHash, 'Exit Withdraw', 'ETH');
 								token === 'erc20' && props.txComplete(exitTxHash, 'Exit Withdraw', 'ERC20');
+								props.txOutProcess();
 							});
 					});
 			}
@@ -227,10 +232,11 @@ const Withdraw = (props) => {
 						console.log(logs.transactionHash);
 						setExitTxHash((exitTxHash = logs.transactionHash));
 						props.txComplete(exitTxHash, 'Exit Withdraw', 'ERC721');
+						props.txOutProcess();
 					});
 			});
 		}
-		props.txOutProcess();
+		
 		console.log('Done');
 	};
 

@@ -18,7 +18,7 @@ import {
 } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Alert from '@material-ui/lab/Alert';
-import { txComplete } from './../../../../actions';
+import { txComplete, txInProcess } from './../../../../actions';
 
 const useStyles = makeStyles((theme) => ({
 	root: {},
@@ -124,6 +124,7 @@ const Deposit = (props) => {
 					console.log('Deposit on Ropsten:' + logs.transactionHash);
 					settxHash((txHash = logs.transactionHash));
 					props.txComplete(txHash, 'Deposit', 'ETH');
+					props.txInProcess(txHash)
 				});
 			} else if (token === 'erc20') {
 				setError((currentState) => ({ ...currentState, erc20Error: '' }));
@@ -305,6 +306,7 @@ const Deposit = (props) => {
 									rel="noopener noreferrer"
 								>
 									{txHash}
+									{console.log(props.txProcess)}
 								</a>
 							</Alert>
 						)}
@@ -319,4 +321,10 @@ Deposit.propTypes = {
 	className: PropTypes.string
 };
 
-export default connect(null, { txComplete })(Deposit);
+const mapStateToProps = (state) => {
+	return {
+		txProcess: state.txProcess
+	};
+};
+
+export default connect(mapStateToProps, { txComplete, txInProcess })(Deposit);

@@ -64,7 +64,40 @@ const TxTable = (props) => {
 												</a>
 											</TableCell>
 										)}
-										{tx.method === 'transfer' && (
+										{tx.method === 'Transfer' && (
+											<TableCell component="th" scope="row">
+												<a
+													href={`https://testnetv3-explorer.matic.network/tx/${tx.txHash}/token_transfers`}
+													target="_blank"
+													rel="noopener noreferrer"
+												>
+													{tx.txHash}
+												</a>
+											</TableCell>
+										)}
+										{tx.method === 'Confirm Withdraw' && (
+											<TableCell component="th" scope="row">
+												<a
+													href={`https://ropsten.etherscan.io/tx/${tx.txHash}`}
+													target="_blank"
+													rel="noopener noreferrer"
+												>
+													{tx.txHash}
+												</a>
+											</TableCell>
+										)}
+										{tx.method === 'Exit Withdraw' && (
+											<TableCell component="th" scope="row">
+												<a
+													href={`https://ropsten.etherscan.io/tx/${tx.txHash}`}
+													target="_blank"
+													rel="noopener noreferrer"
+												>
+													{tx.txHash}
+												</a>
+											</TableCell>
+										)}
+										{tx.method === 'Initial Withdraw' && (
 											<TableCell component="th" scope="row">
 												<a
 													href={`https://testnetv3-explorer.matic.network/tx/${tx.txHash}/token_transfers`}
