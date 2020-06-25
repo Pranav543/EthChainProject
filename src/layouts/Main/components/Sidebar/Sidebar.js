@@ -6,7 +6,7 @@ import { Divider, Drawer } from '@material-ui/core';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PeopleIcon from '@material-ui/icons/People';
 
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
+
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import SyncAltIcon from '@material-ui/icons/SyncAlt';
 import ImportExportIcon from '@material-ui/icons/ImportExport';

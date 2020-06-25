@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Card, CardContent, Grid, Typography, Avatar } from '@material-ui/core';
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import MoneyIcon from '@material-ui/icons/Money';
 
 const useStyles = makeStyles(theme => ({
@@ -52,19 +51,49 @@ const Budget = props => {
 
   const [ from, setFrom ] = useState([]);
 
-  //let Matic_ERC721Address = "0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5"
+  let Matic_ERC721Address = "0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5"
+  let Ropsten_ERC721Address = "0x07d799252cf13c01f602779b4dce24f4e5b08bbd"
 
   const classes = useStyles();
 
-  /*useEffect(() => {
+  useEffect(() => {
     Accounts().then((result) => {
 			const account = result;
       setFrom(account);
-      window.matic.balanceOfERC721(from,Matic_ERC721Address,{from}).then((result)=>{
-        setAmount(result)
+      window.web3.eth.net.getId().then((result)=>{
+        // console.log(typeof(window.chainID))
+        window.chainID = result;
+        if(window.web3 !== undefined || window.matic !== undefined){
+            if(window.chainID !== undefined && from !== []){
+              try{
+                if(window.chainID===15001){
+                  console.log(typeof(window.from))
+                  window.matic.balanceOfERC721(window.from,Matic_ERC721Address,{from:window.from,parent:false}).then(async(result)=>{
+                    console.log(result)
+                    setAmount(result)
+                  })
+                }
+                else if(window.chainID===3){
+                  window.matic.balanceOfERC721(window.from,Ropsten_ERC721Address,{from:window.from,parent:true}).then(async (result)=>{
+                    console.log(result)
+                    setAmount(result)
+                  })
+                }
+                else{
+                  console.log("Change network")
+                }
+              }
+              catch(err){
+                console.log(err)
+              }
+              
+            }
+          
+        }
       })
+      
 		});
-  })*/
+  })
 
 
   return (

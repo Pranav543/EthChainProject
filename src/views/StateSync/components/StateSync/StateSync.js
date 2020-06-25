@@ -40,24 +40,42 @@ const StateSync = (props) => {
 
 	const [ open, setOpen ] = useState(false);
 
-	const [ file, handleSave ] = useState([]);
+	const [ chainID, setChainID ] = useState(0)
+
+	const [ buffer, setBuffer ] = useState(null);
 
 	let [ txHash, settxHash ] = useState('');
 
-	const handleChange = async (file) => {
-		//Saving files to state for further use.
-		handleSave(file);
-		let sender = await new window.web3.eth.Contract(Sender,"0x02C51a8aBe9CED54588d19300cc91844e0aF6b16")
-		const file_bs58 = await ipfs.add(Buffer.from(file))
-		const file_bytes = bs58.decode(file_bs58[0].hash);
-		const file_hex = '0x' + file_bytes.slice(2).toString('hex');
-		console.log(file_hex)
-		const transaction = await sender.methods.sendState(file_hex).send({from})
-		console.log(transaction.transactionHash)
-		settxHash((txHash = transaction.transactionHash));
-		setOpen(false);
-		console.log(file);
-	};
+	const handleChange = async(file) => {
+		try{
+			const reader = new FileReader()
+    		reader.readAsArrayBuffer(file[0])
+    		reader.onloadend = () => {
+      		setBuffer(Buffer(reader.result))
+      		console.log('buffer', buffer)
+			}
+		}
+		catch(err){
+			console.log("again")
+		}
+	}
+
+	const handleSubmit = async(file) => {
+		try{
+			let sender = await new window.web3.eth.Contract(Sender,"0x02C51a8aBe9CED54588d19300cc91844e0aF6b16")
+			const file_bs58 = await ipfs.add(buffer);
+			const file_bytes = bs58.decode(file_bs58[0].hash);
+			const file_hex = '0x' + file_bytes.slice(2).toString('hex');
+			console.log(file_hex)
+			const transaction = await sender.methods.sendState(file_hex).send({from})
+			console.log(transaction.transactionHash)
+			settxHash((txHash = transaction.transactionHash));
+			setOpen(false);
+		}
+		catch(err){
+			alert(err)
+		}
+	}
 
 	const handleClose = () => {
 		setOpen(false);
@@ -71,42 +89,55 @@ const StateSync = (props) => {
 		Accounts().then((result) => {
 			const account = result;
 			setFrom(account);
+			window.web3.eth.net.getId().then((result)=>{
+				setChainID(result)
+			})
 		});
 	});
 
-	return (
-		<Card {...rest} className={clsx(classes.root, className)}>
-			<CardHeader subheader="Upload Files to Matic Chain" title="Upload(State-Sync Feature)" />
-			<Divider />
-
-			<CardContent>
-				<Button color="primary" variant="outlined" onClick={handleOpen}>
-					Upload File
-				</Button>
-
-				<DropzoneDialog
-					open={open}
-					onSave={handleChange}
-					showPreviews={true}
-					maxFileSize={50000000}
-					onClose={handleClose}
-				/>
+	if(chainID===3){
+		return (
+			<Card {...rest} className={clsx(classes.root, className)}>
+				<CardHeader subheader="Upload Files to Matic Chain" title="Upload(State-Sync Feature)" />
 				<Divider />
-							{txHash !== '' && (
-								<Alert severity="success">
-									The transaction was a success! Check it out{' '}
-									<a
-										href={`https://ropsten.etherscan.io/tx/${txHash}`}
-										target="_blank"
-										rel="noopener noreferrer"
-									>
-										{txHash}
-									</a>
-								</Alert>
-							)}
-			</CardContent>
-		</Card>
-	);
+	
+				<CardContent>
+					<Button color="primary" variant="outlined" onClick={handleOpen}>
+						Upload File
+					</Button>
+	
+					<DropzoneDialog
+						open={open}
+						onSave={handleSubmit}
+						onChange={handleChange}
+						showPreviews={true}
+						maxFileSize={50000000}
+						onClose={handleClose}
+					/>
+					<Divider />
+								{txHash !== '' && (
+									<Alert severity="success">
+										The transaction was a success! Check it out{' '}
+										<a
+											href={`https://ropsten.etherscan.io/tx/${txHash}`}
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											{txHash}
+										</a>
+									</Alert>
+								)}
+				</CardContent>
+			</Card>
+		);
+	}
+	else{
+		return(
+			<div>
+				<h1>change network</h1>
+			</div>
+		)
+	}
 };
 
 StateSync.propTypes = {

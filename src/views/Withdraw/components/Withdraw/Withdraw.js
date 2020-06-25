@@ -51,6 +51,8 @@ const Withdraw = (props) => {
 
 	const [ from, setFrom ] = useState([]);
 
+	const [ chainID, setChainID ] = useState(0)
+
 	const [ open, setOpen ] = useState(false);
 
 	const [ amount, setAmount ] = useState('');
@@ -79,6 +81,10 @@ const Withdraw = (props) => {
 		Accounts().then((result) => {
 			const account = result;
 			setFrom(account);
+			window.web3.eth.net.getId().then((result)=>{
+				setChainID(result)
+				console.log(result)
+			})
 		});
 	});
 
@@ -142,9 +148,12 @@ const Withdraw = (props) => {
 				} else {
 					t = '0xBc0AEe9f7b65fd3d8be30ba648e00dB5F734942b';
 				}
-				window.matic.startWithdraw(t, amount, { from }).then((logs) => {
-					props.txInProcess(logs.transactionHash);
+				const a = window.web3.utils.toWei(amount, 'ether');
+				window.matic.startWithdraw(t, a, { from }).then((logs) => {
+					
 					setInitxHash((initTxHash = logs.transactionHash));
+					props.txInProcess(initTxHash);
+
 					token === 'eth' && props.txComplete(initTxHash, 'Initial Withdraw', 'ETH');
 					token === 'erc20' && props.txComplete(initTxHash, 'Initial Withdraw', 'ERC20');
 				});
@@ -153,9 +162,10 @@ const Withdraw = (props) => {
 				isErrorProp(false);
 				const tokenId = '1';
 				t = '0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5';
-				window.matic.startWithdrawForNFT(t, amount, { from }).then((logs) => {
-					props.txInProcess(logs.transactionHash);
+				window.matic.startWithdrawForNFT(t, tokenId, { from }).then((logs) => {
+					
 					setInitxHash((initTxHash = logs.transactionHash));
+					props.txInProcess(initTxHash);
 					props.txComplete(initTxHash, 'Initial Withdraw', 'ERC721');
 				});
 			}
@@ -166,7 +176,8 @@ const Withdraw = (props) => {
 	};
 
 	const ConfWithdraw = async (transactionHash) => {
-		let t;
+		try{
+			let t;
 		if (token === 'eth' || token === 'erc20') {
 			if (token === 'eth') {
 				window.matic
@@ -210,6 +221,7 @@ const Withdraw = (props) => {
 								setExitTxHash((exitTxHash = logs.transactionHash));
 								token === 'eth' && props.txComplete(exitTxHash, 'Exit Withdraw', 'ETH');
 								token === 'erc20' && props.txComplete(exitTxHash, 'Exit Withdraw', 'ERC20');
+								props.txOutProcess();
 							});
 					});
 			}
@@ -227,10 +239,14 @@ const Withdraw = (props) => {
 						console.log(logs.transactionHash);
 						setExitTxHash((exitTxHash = logs.transactionHash));
 						props.txComplete(exitTxHash, 'Exit Withdraw', 'ERC721');
+						props.txOutProcess();
 					});
 			});
 		}
-		props.txOutProcess();
+		}
+		catch(err){
+			alert(err)
+		}
 		console.log('Done');
 	};
 
@@ -250,113 +266,123 @@ const Withdraw = (props) => {
 		setOpen(true);
 	};
 	if (props.txProcess.length === 0) {
-		return (
-			<Card {...rest} className={clsx(classes.root, className)}>
-				<form>
-					<CardHeader subheader="Withdraw From Matic Chain" title="Withdraw" />
-					<Divider />
-
-					<FormControl className={classes.formControl}>
-						<InputLabel id="demo-controlled-open-select-label">Set Token</InputLabel>
-						<Select
-							labelId="demo-controlled-open-select-label"
-							id="demo-controlled-open-select"
-							open={open}
-							onClose={handleClose}
-							onOpen={handleOpen}
-							value={token}
-							onChange={handleChange}
-						>
-							<MenuItem value="">
-								<em>None</em>
-							</MenuItem>
-							<MenuItem value={'eth'}>Ether</MenuItem>
-							<MenuItem value={'erc20'}>ERC20</MenuItem>
-							<MenuItem value={'erc721'}>ERC721</MenuItem>
-						</Select>
-					</FormControl>
-
-					{token === 'eth' && (
-						<div>
-							<CardContent>
-								<TextField
-									fullWidth
-									error={errorProp}
-									label="Amount in Ether"
-									name="amount"
-									value={amount}
-									onChange={handleAmountChange}
-									variant="outlined"
-									id="outlined-error-helper-text"
-									helperText={ethError}
-								/>
-							</CardContent>
-
-							<Divider />
-							<CardActions>
-								<Button color="primary" variant="outlined" onClick={InitWithdraw}>
-									Withdraw
-								</Button>
+		console.log("c: ",chainID)
+		if(chainID===15001){
+			return (
+				<Card {...rest} className={clsx(classes.root, className)}>
+					<form>
+						<CardHeader subheader="Withdraw From Matic Chain" title="Withdraw" />
+						<Divider />
+	
+						<FormControl className={classes.formControl}>
+							<InputLabel id="demo-controlled-open-select-label">Set Token</InputLabel>
+							<Select
+								labelId="demo-controlled-open-select-label"
+								id="demo-controlled-open-select"
+								open={open}
+								onClose={handleClose}
+								onOpen={handleOpen}
+								value={token}
+								onChange={handleChange}
+							>
+								<MenuItem value="">
+									<em>None</em>
+								</MenuItem>
+								<MenuItem value={'eth'}>Ether</MenuItem>
+								<MenuItem value={'erc20'}>ERC20</MenuItem>
+								<MenuItem value={'erc721'}>ERC721</MenuItem>
+							</Select>
+						</FormControl>
+	
+						{token === 'eth' && (
+							<div>
+								<CardContent>
+									<TextField
+										fullWidth
+										error={errorProp}
+										label="Amount in Ether"
+										name="amount"
+										value={amount}
+										onChange={handleAmountChange}
+										variant="outlined"
+										id="outlined-error-helper-text"
+										helperText={ethError}
+									/>
+								</CardContent>
+	
 								<Divider />
-								{loading && <CircularProgress />}
-							</CardActions>
-						</div>
-					)}
-					{token === 'erc20' && (
-						<div>
-							<CardContent>
-								<TextField
-									fullWidth
-									error={errorProp}
-									label="Amount"
-									name="amount"
-									value={amount}
-									onChange={handleAmountChange}
-									variant="outlined"
-									id="outlined-error-helper-text"
-									helperText={erc20Error}
-								/>
-							</CardContent>
-
-							<Divider />
-							<CardActions>
-								<Button color="primary" variant="outlined" onClick={InitWithdraw}>
-									Withdraw
-								</Button>
+								<CardActions>
+									<Button color="primary" variant="outlined" onClick={InitWithdraw}>
+										Withdraw
+									</Button>
+									<Divider />
+									{loading && <CircularProgress />}
+								</CardActions>
+							</div>
+						)}
+						{token === 'erc20' && (
+							<div>
+								<CardContent>
+									<TextField
+										fullWidth
+										error={errorProp}
+										label="Amount"
+										name="amount"
+										value={amount}
+										onChange={handleAmountChange}
+										variant="outlined"
+										id="outlined-error-helper-text"
+										helperText={erc20Error}
+									/>
+								</CardContent>
+	
 								<Divider />
-								{loading && <CircularProgress />}
-							</CardActions>
-						</div>
-					)}
-					{token === 'erc721' && (
-						<div>
-							<CardContent>
-								<TextField
-									fullWidth
-									error={errorProp}
-									label="Amount"
-									name="amount"
-									value={amount}
-									onChange={handleAmountChange}
-									variant="outlined"
-									id="outlined-error-helper-text"
-									helperText={erc721Error}
-								/>
-							</CardContent>
-
-							<Divider />
-							<CardActions>
-								<Button color="primary" variant="outlined" onClick={InitWithdraw}>
-									Withdraw
-								</Button>
+								<CardActions>
+									<Button color="primary" variant="outlined" onClick={InitWithdraw}>
+										Withdraw
+									</Button>
+									<Divider />
+									{loading && <CircularProgress />}
+								</CardActions>
+							</div>
+						)}
+						{token === 'erc721' && (
+							<div>
+								<CardContent>
+									<TextField
+										fullWidth
+										error={errorProp}
+										label="Amount"
+										name="amount"
+										value={amount}
+										onChange={handleAmountChange}
+										variant="outlined"
+										id="outlined-error-helper-text"
+										helperText={erc721Error}
+									/>
+								</CardContent>
+	
 								<Divider />
-								{loading && <CircularProgress />}
-							</CardActions>
-						</div>
-					)}
-				</form>
-			</Card>
-		);
+								<CardActions>
+									<Button color="primary" variant="outlined" onClick={InitWithdraw}>
+										Withdraw
+									</Button>
+									<Divider />
+									{loading && <CircularProgress />}
+								</CardActions>
+							</div>
+						)}
+					</form>
+				</Card>
+			);
+		}
+		else{
+			return(
+				<div>
+					<h1>change net0work</h1>
+				</div>
+			)
+		}
 	} else if (props.txProcess.length === 1 && start === true) {
 		return (
 			<div>
@@ -374,65 +400,74 @@ const Withdraw = (props) => {
 			</div>
 		);
 	} else if (props.txProcess.length === 1 && start === false) {
-		return (
-			<Card {...rest} className={clsx(classes.root, className)}>
-				<form>
-					<CardHeader subheader="Withdraw From Matic Chain" title="Withdraw" />
-					<Divider />
-					<div>
-						<CardActions>
-							<Button
-								color="primary"
-								variant="outlined"
-								onClick={ConfWithdraw(props.txProcess[0].txHash)}
-							>
-								Confirm Withdraw
-							</Button>
+		if(chainID===3){
+			return (
+				<Card {...rest} className={clsx(classes.root, className)}>
+					<form>
+						<CardHeader subheader="Withdraw From Matic Chain" title="Withdraw" />
+						<Divider />
+						<div>
+							<CardActions>
+								<Button
+									color="primary"
+									variant="outlined"
+									onClick={ConfWithdraw(props.txProcess[0].txHash)}
+								>
+									Confirm Withdraw
+								</Button>
+								<Divider />
+								{loading && <CircularProgress />}
+							</CardActions>
+							{initTxHash !== '' && (
+								<Alert severity="success">
+									The transaction was a success! Check it out{' '}
+									<a
+										href={`https://testnetv3-explorer.matic.network/tx/${initTxHash}/token_transfers`}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{initTxHash}
+									</a>
+								</Alert>
+							)}
 							<Divider />
-							{loading && <CircularProgress />}
-						</CardActions>
-						{initTxHash !== '' && (
-							<Alert severity="success">
-								The transaction was a success! Check it out{' '}
-								<a
-									href={`https://testnetv3-explorer.matic.network/tx/${initTxHash}/token_transfers`}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{initTxHash}
-								</a>
-							</Alert>
-						)}
-						<Divider />
-						{confirmTxHash !== '' && (
-							<Alert severity="success">
-								The transaction was a success! Check it out{' '}
-								<a
-									href={`https://ropsten.etherscan.io/tx/${confirmTxHash}`}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{confirmTxHash}
-								</a>
-							</Alert>
-						)}
-						<Divider />
-						{exitTxHash !== '' && (
-							<Alert severity="success">
-								The transaction was a success! Check it out{' '}
-								<a
-									href={`https://ropsten.etherscan.io/tx/${exitTxHash}`}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{exitTxHash}
-								</a>
-							</Alert>
-						)}
-					</div>
-				</form>
-			</Card>
-		);
+							{confirmTxHash !== '' && (
+								<Alert severity="success">
+									The transaction was a success! Check it out{' '}
+									<a
+										href={`https://ropsten.etherscan.io/tx/${confirmTxHash}`}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{confirmTxHash}
+									</a>
+								</Alert>
+							)}
+							<Divider />
+							{exitTxHash !== '' && (
+								<Alert severity="success">
+									The transaction was a success! Check it out{' '}
+									<a
+										href={`https://ropsten.etherscan.io/tx/${exitTxHash}`}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{exitTxHash}
+									</a>
+								</Alert>
+							)}
+						</div>
+					</form>
+				</Card>
+			);
+		}
+		else{
+			return(
+				<div>
+					<h1>change network</h1>
+				</div>
+			)
+		}
 	}
 };
 

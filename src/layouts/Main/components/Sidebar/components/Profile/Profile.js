@@ -35,6 +35,7 @@ const Profile = (props) => {
 		Accounts().then((result) => {
 			const account = result;
 			setAddress(account);
+			window.from = account
 		});
 	});
 
