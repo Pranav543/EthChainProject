@@ -42,21 +42,50 @@ const TotalProfit = props => {
 
   const [ from, setFrom ] = useState([]);
 
-  //let Matic_ERC20Address = "0xBc0AEe9f7b65fd3d8be30ba648e00dB5F734942b"
+  let Matic_ERC20Address = "0xBc0AEe9f7b65fd3d8be30ba648e00dB5F734942b"
+  let Ropsten_ERC20Address = "0xEc5C207897C4378658F52bCCCE0ea648D1f17D65"
 
   const classes = useStyles();
 
-  /* useEffect(() => {
+  useEffect(() => {
     Accounts().then((result) => {
 			const account = result;
       setFrom(account);
-      console.log(Matic_ERC20Address)
-      window.matic.balanceOfERC20(from,Matic_ERC20Address,{from,parent:false}).then((result)=>{
-        console.log(result)
-        setAmount(result)
+      window.web3.eth.net.getId().then((result)=>{
+        // console.log(typeof(window.chainID))
+        window.chainID = result;
+        console.log(window.chainID)
+        if(window.web3 !== undefined || window.matic !== undefined){
+          try{
+            if(window.chainID !== undefined){
+              if(window.chainID===15001){
+                window.matic.balanceOfERC20(window.from,Matic_ERC20Address,{from:window.from,parent:false}).then(async(result)=>{
+                  let value = await window.web3.utils.fromWei(result)
+                  console.log(value)
+                  setAmount(value)
+                })
+              }
+              else if(window.chainID===3){
+                console.log(from)
+                window.matic.balanceOfERC20(window.from,Ropsten_ERC20Address,{from:window.from,parent:true}).then(async (result)=>{
+                  console.log(result)
+                  let value = await window.web3.utils.fromWei(result)
+                  console.log(value)
+                  setAmount(value)
+                })
+              }
+              else{
+                console.log("Change network")
+              }
+            }
+          }
+          catch(err){
+            console.log(err)
+          }
+        }
       })
 		});
-  }); */
+  });
 
   return (
     <Card

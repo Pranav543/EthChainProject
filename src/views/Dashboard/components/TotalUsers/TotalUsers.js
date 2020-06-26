@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Card, CardContent, Grid, Typography, Avatar } from '@material-ui/core';
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import PeopleIcon from '@material-ui/icons/PeopleOutlined';
 
 const useStyles = makeStyles(theme => ({
@@ -42,14 +41,26 @@ const useStyles = makeStyles(theme => ({
 
 const TotalUsers = props => {
   const { className, ...rest } = props;
+  
 
   const classes = useStyles();
 
+  const [ network, setNetwork ] = useState('')
+
   useEffect(() => {
 		window.web3.eth.net.getId().then((result)=>{
-      window.chainID = result
+      if(result===15001){
+        setNetwork('Matic TestNetv3')
+      }
+      else if(result===3){
+        setNetwork('Ropsten')
+      }
+      else{
+        setNetwork('None')
+      }
       // console.log(typeof(window.chainID))
-      // console.log(window.chainID)
+      window.chainID = result;
+      console.log(window.chainID)
     })
 	});
 
@@ -72,9 +83,9 @@ const TotalUsers = props => {
               gutterBottom
               variant="body2"
             >
-              Chain ID
+              Network
             </Typography>
-          {window.chainID >=0 && <Typography variant="h3">{window.chainID}</Typography>}
+          <Typography variant="h3">{network}</Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>

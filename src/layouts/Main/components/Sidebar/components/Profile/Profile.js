@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Avatar, Typography } from '@material-ui/core';
+import TextTruncate from 'react-text-truncate';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -35,6 +36,7 @@ const Profile = (props) => {
 		Accounts().then((result) => {
 			const account = result;
 			setAddress(account);
+			window.from = account;
 		});
 	});
 
@@ -54,7 +56,23 @@ const Profile = (props) => {
 			<Typography className={classes.name} variant="h4">
 				{user.name}
 			</Typography>
-			<Typography variant="body2">{user.bio}</Typography>
+			<TextTruncate
+					line={1}
+					element="span"
+					truncateText="…"
+					text={user.bio}
+					textTruncateChild={<a href="#">Read on</a>}
+				/>
+			<Typography variant="body2">
+				<TextTruncate
+					line={1}
+					element="span"
+					truncateText="…"
+					text={user.bio}
+					textTruncateChild={<a href="#">Read on</a>}
+				/>
+				{user.bio}
+			</Typography>
 		</div>
 	);
 };

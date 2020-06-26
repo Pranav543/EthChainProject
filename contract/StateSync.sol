@@ -18,7 +18,7 @@ contract sender {
   mapping(address=>uint[]) address_to_states;
   
   function sendState(bytes32 filehash) external {
-    states = states + 1 ;
+    states = states + 1;
     address_to_states[msg.sender].push(states);
     bytes memory data = abi.encode(msg.sender,states,filehash);
     IStateSender(stateSenderContract).syncState(receiver, data);

@@ -48,6 +48,8 @@ const Transfer = (props) => {
 
 	const [ token, setToken ] = React.useState('');
 
+	const [ chainID, setChainID ] = useState(0)
+
 	const [ open, setOpen ] = React.useState(false);
 
 	const [ amount, setAmount ] = React.useState('');
@@ -68,6 +70,9 @@ const Transfer = (props) => {
 		Accounts().then((result) => {
 			const account = result;
 			setFrom(account);
+			window.web3.eth.net.getId().then((result)=>{
+				setChainID(result)
+			})
 		});
 	});
 
@@ -110,38 +115,47 @@ const Transfer = (props) => {
 		const err = validate();
 		if (err === false) {
 			changeloading((prevState) => (loading = !prevState));
-			if (token === 'eth') {
-				setError((currentState) => ({ ...currentState, ethError: '' }));
-				isErrorProp(false);
-				const a = window.web3.utils.toWei(amount, 'ether');
-				const Matic_WEthAddress = '0x8567184E6F9b1B77f24AfF6168453419AD22f90e';
-				let token = Matic_WEthAddress;
-				await window.matic.transferERC20Tokens(token, TransferTo, a, { from }).then(async (logs) => {
-					console.log('Transfer on Ropsten:' + logs.transactionHash);
-					settxHash((txHash = logs.transactionHash));
-					props.txComplete(txHash, 'Transfer', 'ETH');
-				});
-			} else if (token === 'erc20') {
-				setError((currentState) => ({ ...currentState, erc20Error: '' }));
-				isErrorProp(false);
-				const Matic_Erc20Address = '0xBc0AEe9f7b65fd3d8be30ba648e00dB5F734942b';
-				let token = Matic_Erc20Address;
-				await window.matic.transferERC20Tokens(token, TransferTo, amount, { from }).then(async (logs) => {
-					console.log('Transfer on Ropsten:' + logs.transactionHash);
-					settxHash((txHash = logs.transactionHash));
-					props.txComplete(txHash, 'Transfer', 'ERC20');
-				});
-			} else if (token === 'erc721') {
-				setError((currentState) => ({ ...currentState, erc721Error: '' }));
-				isErrorProp(false);
-				const Matic_Erc721Address = '0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5';
-				let token = Matic_Erc721Address;
-				const tokenId = '746';
-				await window.matic.transferERC721Tokens(token, TransferTo, tokenId, { from }).then(async (logs) => {
-					console.log('Transfer on Ropsten:' + logs.transactionHash);
-					settxHash((txHash = logs.transactionHash));
-					props.txComplete(txHash, 'Transfer', 'ERC721');
-				});
+			try{
+				if (token === 'eth') {
+					setError((currentState) => ({ ...currentState, ethError: '' }));
+					isErrorProp(false);
+					const a = window.web3.utils.toWei(amount, 'ether');
+					console.log(a)
+					console.log(from)
+					console.log(TransferTo)
+					const Matic_WEthAddress = '0x8567184E6F9b1B77f24AfF6168453419AD22f90e';
+					let token = Matic_WEthAddress;
+					await window.matic.transferERC20Tokens(token, TransferTo, a, { from }).then(async (logs) => {
+						console.log('Transfer on Ropsten:' + logs.transactionHash);
+						settxHash((txHash = logs.transactionHash));
+						props.txComplete(txHash, 'Transfer', 'ETH');
+					});
+				} else if (token === 'erc20') {
+					setError((currentState) => ({ ...currentState, erc20Error: '' }));
+					isErrorProp(false);
+					const a = window.web3.utils.toWei(amount, 'ether');
+					const Matic_Erc20Address = '0xBc0AEe9f7b65fd3d8be30ba648e00dB5F734942b';
+					let token = Matic_Erc20Address;
+					await window.matic.transferERC20Tokens(token, TransferTo, a, { from }).then(async (logs) => {
+						console.log('Transfer on Ropsten:' + logs.transactionHash);
+						settxHash((txHash = logs.transactionHash));
+						props.txComplete(txHash, 'Transfer', 'ERC20');
+					});
+				} else if (token === 'erc721') {
+					setError((currentState) => ({ ...currentState, erc721Error: '' }));
+					isErrorProp(false);
+					const Matic_Erc721Address = '0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5';
+					let token = Matic_Erc721Address;
+					const tokenId = '746';
+					await window.matic.transferERC721Tokens(token, TransferTo, tokenId, { from }).then(async (logs) => {
+						console.log('Transfer on Ropsten:' + logs.transactionHash);
+						settxHash((txHash = logs.transactionHash));
+						props.txComplete(txHash, 'Transfer', 'ERC721');
+					});
+				}
+			}
+			catch(err){
+				alert(err)
 			}
 			changeloading((prevState) => (loading = !prevState));
 		}
@@ -167,163 +181,172 @@ const Transfer = (props) => {
 		setOpen(true);
 	};
 
-	return (
-		<Card {...rest} className={clsx(classes.root, className)}>
-			<CardHeader subheader="Transfer On Matic Chain" title="Transfer" />
-			<Divider />
-
-			<FormControl className={classes.formControl}>
-				<InputLabel id="demo-controlled-open-select-label">Set Token</InputLabel>
-				<Select
-					labelId="demo-controlled-open-select-label"
-					id="demo-controlled-open-select"
-					open={open}
-					onClose={handleClose}
-					onOpen={handleOpen}
-					value={token}
-					onChange={handleChange}
-				>
-					<MenuItem value="">
-						<em>None</em>
-					</MenuItem>
-					<MenuItem value={'eth'}>Ether</MenuItem>
-					<MenuItem value={'erc20'}>ERC20</MenuItem>
-					<MenuItem value={'erc721'}>ERC721</MenuItem>
-				</Select>
-			</FormControl>
-			<CardContent>
-				<TextField
-					fullWidth
-					label="Transfer To"
-					name="accoundid"
-					value={TransferTo}
-					onChange={handleTransferChange}
-					variant="outlined"
-				/>
-			</CardContent>
-			{token === 'eth' && (
-				<div>
-					<form>
-						<CardContent>
-							<TextField
-								fullWidth
-								error={errorProp}
-								label="Amount in Ether"
-								name="amount"
-								value={amount}
-								onChange={handleAmountChange}
-								variant="outlined"
-								id="outlined-error-helper-text"
-								helperText={ethError}
-							/>
-						</CardContent>
-
-						<Divider />
-						<CardActions>
-							<Button color="primary" variant="outlined" onClick={transfer}>
-								Transfer WETH
-							</Button>
-
-							{loading && <CircularProgress />}
-						</CardActions>
-						{txHash !== '' && (
-							<Alert severity="success">
-								The transaction was a success! Check it out{' '}
-								<a
-									href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{txHash}
-								</a>
-							</Alert>
-						)}
-					</form>
-				</div>
-			)}
-			{token === 'erc20' && (
-				<div>
-					<form>
-						<CardContent>
-							<TextField
-								fullWidth
-								error={errorProp}
-								label="Amount"
-								name="amount"
-								value={amount}
-								onChange={handleAmountChange}
-								variant="outlined"
-								id="outlined-error-helper-text"
-								helperText={erc20Error}
-							/>
-						</CardContent>
-
-						<Divider />
-						<CardActions>
-							<Button color="primary" variant="outlined" onClick={transfer}>
-								Transfer ERC20
-							</Button>
-
-							{loading && <CircularProgress />}
-						</CardActions>
-
-						{txHash !== '' && (
-							<Alert severity="success">
-								The transaction was a success! Check it out{' '}
-								<a
-									href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{txHash}
-								</a>
-							</Alert>
-						)}
-					</form>
-				</div>
-			)}
-			{token === 'erc721' && (
-				<div>
-					<form>
-						<CardContent>
-							<TextField
-								fullWidth
-								error={errorProp}
-								label="Amount"
-								name="amount"
-								value={amount}
-								onChange={handleAmountChange}
-								variant="outlined"
-								id="outlined-error-helper-text"
-								helperText={erc721Error}
-							/>
-						</CardContent>
-
-						<Divider />
-						<CardActions>
-							<Button color="primary" variant="outlined" onClick={transfer}>
-								Transfer ERC721
-							</Button>
-
-							{loading && <CircularProgress />}
-						</CardActions>
-						{txHash !== '' && (
-							<Alert severity="success">
-								The transaction was a success! Check it out{' '}
-								<a
-									href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{txHash}
-								</a>
-							</Alert>
-						)}
-					</form>
-				</div>
-			)}
-		</Card>
-	);
+	if(chainID===15001){
+		return (
+			<Card {...rest} className={clsx(classes.root, className)}>
+				<CardHeader subheader="Transfer On Matic Chain" title="Transfer" />
+				<Divider />
+	
+				<FormControl className={classes.formControl}>
+					<InputLabel id="demo-controlled-open-select-label">Set Token</InputLabel>
+					<Select
+						labelId="demo-controlled-open-select-label"
+						id="demo-controlled-open-select"
+						open={open}
+						onClose={handleClose}
+						onOpen={handleOpen}
+						value={token}
+						onChange={handleChange}
+					>
+						<MenuItem value="">
+							<em>None</em>
+						</MenuItem>
+						<MenuItem value={'eth'}>Ether</MenuItem>
+						<MenuItem value={'erc20'}>ERC20</MenuItem>
+						<MenuItem value={'erc721'}>ERC721</MenuItem>
+					</Select>
+				</FormControl>
+				<CardContent>
+					<TextField
+						fullWidth
+						label="Transfer To"
+						name="accoundid"
+						value={TransferTo}
+						onChange={handleTransferChange}
+						variant="outlined"
+					/>
+				</CardContent>
+				{token === 'eth' && (
+					<div>
+						<form>
+							<CardContent>
+								<TextField
+									fullWidth
+									error={errorProp}
+									label="Amount in Ether"
+									name="amount"
+									value={amount}
+									onChange={handleAmountChange}
+									variant="outlined"
+									id="outlined-error-helper-text"
+									helperText={ethError}
+								/>
+							</CardContent>
+	
+							<Divider />
+							<CardActions>
+								<Button color="primary" variant="outlined" onClick={transfer}>
+									Transfer WETH
+								</Button>
+	
+								{loading && <CircularProgress />}
+							</CardActions>
+							{txHash !== '' && (
+								<Alert severity="success">
+									The transaction was a success! Check it out{' '}
+									<a
+										href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{txHash}
+									</a>
+								</Alert>
+							)}
+						</form>
+					</div>
+				)}
+				{token === 'erc20' && (
+					<div>
+						<form>
+							<CardContent>
+								<TextField
+									fullWidth
+									error={errorProp}
+									label="Amount"
+									name="amount"
+									value={amount}
+									onChange={handleAmountChange}
+									variant="outlined"
+									id="outlined-error-helper-text"
+									helperText={erc20Error}
+								/>
+							</CardContent>
+	
+							<Divider />
+							<CardActions>
+								<Button color="primary" variant="outlined" onClick={transfer}>
+									Transfer ERC20
+								</Button>
+	
+								{loading && <CircularProgress />}
+							</CardActions>
+	
+							{txHash !== '' && (
+								<Alert severity="success">
+									The transaction was a success! Check it out{' '}
+									<a
+										href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{txHash}
+									</a>
+								</Alert>
+							)}
+						</form>
+					</div>
+				)}
+				{token === 'erc721' && (
+					<div>
+						<form>
+							<CardContent>
+								<TextField
+									fullWidth
+									error={errorProp}
+									label="Amount"
+									name="amount"
+									value={amount}
+									onChange={handleAmountChange}
+									variant="outlined"
+									id="outlined-error-helper-text"
+									helperText={erc721Error}
+								/>
+							</CardContent>
+	
+							<Divider />
+							<CardActions>
+								<Button color="primary" variant="outlined" onClick={transfer}>
+									Transfer ERC721
+								</Button>
+	
+								{loading && <CircularProgress />}
+							</CardActions>
+							{txHash !== '' && (
+								<Alert severity="success">
+									The transaction was a success! Check it out{' '}
+									<a
+										href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{txHash}
+									</a>
+								</Alert>
+							)}
+						</form>
+					</div>
+				)}
+			</Card>
+		);
+	}
+	else{
+		return(
+			<div>
+				<h1>change netowork</h1>
+			</div>
+		)
+	}
 };
 
 Transfer.propTypes = {
