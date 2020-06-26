@@ -46,6 +46,7 @@ const StateSync = (props) => {
 
 	const handleChange = async (file) => {
 		//Saving files to state for further use.
+		
 		handleSave(file);
 		let sender = await new window.web3.eth.Contract(Sender,"0x02C51a8aBe9CED54588d19300cc91844e0aF6b16")
 		const file_bs58 = await ipfs.add(Buffer.from(file))
@@ -58,6 +59,10 @@ const StateSync = (props) => {
 		setOpen(false);
 		console.log(file);
 	};
+
+	const onChange = (file) => {
+		console.log(file)
+	}
 
 	const handleClose = () => {
 		setOpen(false);
@@ -86,6 +91,7 @@ const StateSync = (props) => {
 
 				<DropzoneDialog
 					open={open}
+					onChange={onChange}
 					onSave={handleChange}
 					showPreviews={true}
 					maxFileSize={50000000}
