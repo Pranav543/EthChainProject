@@ -186,7 +186,7 @@ const Withdraw = (props) => {
 			let transactionHash = props.txProcess[0].txHash
 			if (props.txProcess[0].currency === 'eth' || props.txProcess[0].currency === 'erc20') {
 				if (props.txProcess[0].currency === 'eth') {
-					console.log('Hash: ',from)
+					console.log('Hash: ',typeof(transactionHash))
 					console.log('Token: ',props.txProcess[0].currency)
 					window.matic
 						.withdraw(transactionHash, {
