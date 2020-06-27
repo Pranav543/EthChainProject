@@ -20,6 +20,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Alert from '@material-ui/lab/Alert';
 import { txComplete } from './../../../../actions';
 
+
 const useStyles = makeStyles((theme) => ({
 	root: {},
 	button: {
@@ -123,10 +124,10 @@ const Transfer = (props) => {
 					console.log(a)
 					console.log(from)
 					console.log(TransferTo)
-					const Matic_WEthAddress = '0x8567184E6F9b1B77f24AfF6168453419AD22f90e';
+					const Matic_WEthAddress = '0x4DfAe612aaCB5b448C12A591cD0879bFa2e51d62';
 					let token = Matic_WEthAddress;
 					await window.matic.transferERC20Tokens(token, TransferTo, a, { from }).then(async (logs) => {
-						console.log('Transfer on Ropsten:' + logs.transactionHash);
+						console.log('Transfer on Matic:' + logs.transactionHash);
 						settxHash((txHash = logs.transactionHash));
 						props.txComplete(txHash, 'Transfer', 'ETH');
 					});
@@ -134,21 +135,21 @@ const Transfer = (props) => {
 					setError((currentState) => ({ ...currentState, erc20Error: '' }));
 					isErrorProp(false);
 					const a = window.web3.utils.toWei(amount, 'ether');
-					const Matic_Erc20Address = '0xBc0AEe9f7b65fd3d8be30ba648e00dB5F734942b';
+					const Matic_Erc20Address = '0x2d7882beDcbfDDce29Ba99965dd3cdF7fcB10A1e';
 					let token = Matic_Erc20Address;
 					await window.matic.transferERC20Tokens(token, TransferTo, a, { from }).then(async (logs) => {
-						console.log('Transfer on Ropsten:' + logs.transactionHash);
+						console.log('Transfer on Matic:' + logs.transactionHash);
 						settxHash((txHash = logs.transactionHash));
 						props.txComplete(txHash, 'Transfer', 'ERC20');
 					});
 				} else if (token === 'erc721') {
 					setError((currentState) => ({ ...currentState, erc721Error: '' }));
 					isErrorProp(false);
-					const Matic_Erc721Address = '0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5';
+					const Matic_Erc721Address = '0x33FC58F12A56280503b04AC7911D1EceEBcE179c';
 					let token = Matic_Erc721Address;
 					const tokenId = '746';
 					await window.matic.transferERC721Tokens(token, TransferTo, tokenId, { from }).then(async (logs) => {
-						console.log('Transfer on Ropsten:' + logs.transactionHash);
+						console.log('Transfer on Matic:' + logs.transactionHash);
 						settxHash((txHash = logs.transactionHash));
 						props.txComplete(txHash, 'Transfer', 'ERC721');
 					});
@@ -181,7 +182,7 @@ const Transfer = (props) => {
 		setOpen(true);
 	};
 
-	if(chainID===15001){
+	if(chainID===80001){
 		return (
 			<Card {...rest} className={clsx(classes.root, className)}>
 				<CardHeader subheader="Transfer On Matic Chain" title="Transfer" />
@@ -286,7 +287,7 @@ const Transfer = (props) => {
 								<Alert severity="success">
 									The transaction was a success! Check it out{' '}
 									<a
-										href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
+										href={`https://mumbai-explorer.matic.today/tx/${txHash}/token_transfers`}
 										target="_blank"
 										rel="noopener noreferrer"
 									>
@@ -342,10 +343,10 @@ const Transfer = (props) => {
 	}
 	else{
 		return(
-			<div>
-				<h1>change netowork</h1>
-			</div>
-		)
+            <div>
+                <Alert severity="error">Change Network Please!!</Alert>
+            </div>
+        );
 	}
 };
 

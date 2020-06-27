@@ -51,8 +51,8 @@ const Budget = props => {
 
   const [ from, setFrom ] = useState([]);
 
-  let Matic_ERC721Address = "0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5"
-  let Ropsten_ERC721Address = "0x07d799252cf13c01f602779b4dce24f4e5b08bbd"
+  let Matic_ERC721Address = "0x33FC58F12A56280503b04AC7911D1EceEBcE179c"
+  let Goerli_ERC721Address = "0xfA08B72137eF907dEB3F202a60EfBc610D2f224b"
 
   const classes = useStyles();
 
@@ -66,15 +66,15 @@ const Budget = props => {
         if(window.web3 !== undefined || window.matic !== undefined){
             if(window.chainID !== undefined && from !== []){
               try{
-                if(window.chainID===15001){
+                if(window.chainID===80001){
                   console.log(typeof(window.from))
                   window.matic.balanceOfERC721(window.from,Matic_ERC721Address,{from:window.from,parent:false}).then(async(result)=>{
                     console.log(result)
                     setAmount(result)
                   })
                 }
-                else if(window.chainID===3){
-                  window.matic.balanceOfERC721(window.from,Ropsten_ERC721Address,{from:window.from,parent:true}).then(async (result)=>{
+                else if(window.chainID===5){
+                  window.matic.balanceOfERC721(window.from,Goerli_ERC721Address,{from:window.from,parent:true}).then(async (result)=>{
                     console.log(result)
                     setAmount(result)
                   })

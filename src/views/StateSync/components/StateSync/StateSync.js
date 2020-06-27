@@ -7,11 +7,16 @@ import { DropzoneDialog } from 'material-ui-dropzone';
 import { Card, CardHeader, CardContent, Divider, Button } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 
+
+
 const bs58 = require('bs58');
+
 const IPFS = require('ipfs-api');
 const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 
 const Sender = require('../../../../artifacts/Sender.json')
+
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -62,11 +67,13 @@ const StateSync = (props) => {
 
 	const handleSubmit = async(file) => {
 		try{
-			let sender = await new window.web3.eth.Contract(Sender,"0x02C51a8aBe9CED54588d19300cc91844e0aF6b16")
+			console.log(buffer)
+			let sender = await new window.web3.eth.Contract(Sender,"0x2D929d34de4f48DB14F82dBb0e0639cD0D638A25")
 			const file_bs58 = await ipfs.add(buffer);
 			const file_bytes = bs58.decode(file_bs58[0].hash);
 			const file_hex = '0x' + file_bytes.slice(2).toString('hex');
 			console.log(file_hex)
+			console.log(sender)
 			const transaction = await sender.methods.sendState(file_hex).send({from})
 			console.log(transaction.transactionHash)
 			settxHash((txHash = transaction.transactionHash));
@@ -95,7 +102,7 @@ const StateSync = (props) => {
 		});
 	});
 
-	if(chainID===3){
+	if(chainID===5){
 		return (
 			<Card {...rest} className={clsx(classes.root, className)}>
 				<CardHeader subheader="Upload Files to Matic Chain" title="Upload(State-Sync Feature)" />
@@ -119,7 +126,7 @@ const StateSync = (props) => {
 									<Alert severity="success">
 										The transaction was a success! Check it out{' '}
 										<a
-											href={`https://ropsten.etherscan.io/tx/${txHash}`}
+											href={`https://goerli.etherscan.io/tx/${txHash}`}
 											target="_blank"
 											rel="noopener noreferrer"
 										>
@@ -133,10 +140,10 @@ const StateSync = (props) => {
 	}
 	else{
 		return(
-			<div>
-				<h1>change network</h1>
-			</div>
-		)
+            <div>
+                <Alert severity="error">Change Network Please!!</Alert>
+            </div>
+        );
 	}
 };
 

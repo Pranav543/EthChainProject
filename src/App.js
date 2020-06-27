@@ -46,13 +46,13 @@ export default class App extends Component {
 
     
 
-    const network = new Network("testnet", "v3");
+    const network = new Network("testnet", "mumbai");
     const MainNetwork = network.Main;
 
     window.matic = new Matic({
       maticProvider: window.web3,
       parentProvider: window.web3,
-      rootChain: MainNetwork.Contracts.RootChain,
+      rootChain: MainNetwork.Contracts.RootChainProxy,
       withdrawManager: MainNetwork.Contracts.WithdrawManagerProxy,
       depositManager: MainNetwork.Contracts.DepositManagerProxy,
       registry: MainNetwork.Contracts.Registry

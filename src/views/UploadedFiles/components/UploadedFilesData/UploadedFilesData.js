@@ -17,6 +17,8 @@ import {
 	TableContainer
 } from '@material-ui/core';
 
+import Alert from '@material-ui/lab/Alert';
+
 const bs58 = require('bs58');
 
 const Receiver = require('../../../../artifacts/Receiver.json')
@@ -47,7 +49,7 @@ const UploadedFilesData = (props) => {
 
 	const getDetails = async () => {
 		try{
-			let receiver = await new window.web3.eth.Contract(Receiver,"0x162ad5543a7E1658a00477027fd82e2135a555aE")
+			let receiver = await new window.web3.eth.Contract(Receiver,"0x487e0C596F0B1D8A2ed921d590245dc36d2A4fb2")
 			let states = await receiver.methods.getStatesOfAddress().call({from:window.from})
 			let h = []
 			let FileHash;
@@ -73,7 +75,7 @@ const UploadedFilesData = (props) => {
 
 	const classes = useStyles();
 
-	if(chainID===15001){
+	if(chainID===80001){
 		return (
 			<Card {...rest} className={clsx(classes.root, className)}>
 				<Toolbar>
@@ -116,10 +118,10 @@ const UploadedFilesData = (props) => {
 	}
 	else{
 		return(
-			<div>
-				<h1>change netowork</h1>
-			</div>
-		)
+            <div>
+                <Alert severity="error">Change Network Please!!</Alert>
+            </div>
+        );
 	}
 };
 

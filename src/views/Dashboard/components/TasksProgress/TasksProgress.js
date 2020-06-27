@@ -49,7 +49,7 @@ const TasksProgress = props => {
 
   const [ from, setFrom ] = useState([]);
 
-  let Matic_WEthAddress = "0x8567184E6F9b1B77f24AfF6168453419AD22f90e"
+  let Matic_WEthAddress = "0x4DfAe612aaCB5b448C12A591cD0879bFa2e51d62"
 
   useEffect(() => {
     Accounts().then((result) => {
@@ -61,22 +61,19 @@ const TasksProgress = props => {
         if(window.web3 !== undefined || window.matic !== undefined){
           try{
             if(window.chainID !== undefined){
-              console.log("HEllo")
-              if(window.chainID===15001){
+              if(window.chainID===80001){
                 console.log("From: ",window.from)
                 console.log("Token: ",Matic_WEthAddress)
                 let a = window.from
                 window.matic.balanceOfERC20(a,Matic_WEthAddress,{from:window.from,parent:false}).then(async (result)=>{
                   let value = await window.web3.utils.fromWei(result)
-                  console.log(value)
                   setAmount(value)
                 })
               }
-              else if(window.chainID===3){
+              else if(window.chainID===5){
                 console.log(from)
                 window.web3.eth.getBalance(from).then(async(result)=>{
                   let value = await window.web3.utils.fromWei(result)
-                  console.log(value)
                   setAmount(value)
                 })
               }

@@ -42,8 +42,8 @@ const TotalProfit = props => {
 
   const [ from, setFrom ] = useState([]);
 
-  let Matic_ERC20Address = "0xBc0AEe9f7b65fd3d8be30ba648e00dB5F734942b"
-  let Ropsten_ERC20Address = "0xEc5C207897C4378658F52bCCCE0ea648D1f17D65"
+  let Matic_ERC20Address = "0x2d7882beDcbfDDce29Ba99965dd3cdF7fcB10A1e"
+  let Goerli_ERC20Address = "0x3f152B63Ec5CA5831061B2DccFb29a874C317502"
 
   const classes = useStyles();
 
@@ -58,16 +58,16 @@ const TotalProfit = props => {
         if(window.web3 !== undefined || window.matic !== undefined){
           try{
             if(window.chainID !== undefined){
-              if(window.chainID===15001){
+              if(window.chainID===80001){
                 window.matic.balanceOfERC20(window.from,Matic_ERC20Address,{from:window.from,parent:false}).then(async(result)=>{
                   let value = await window.web3.utils.fromWei(result)
                   console.log(value)
                   setAmount(value)
                 })
               }
-              else if(window.chainID===3){
+              else if(window.chainID===5){
                 console.log(from)
-                window.matic.balanceOfERC20(window.from,Ropsten_ERC20Address,{from:window.from,parent:true}).then(async (result)=>{
+                window.matic.balanceOfERC20(window.from,Goerli_ERC20Address,{from:window.from,parent:true}).then(async (result)=>{
                   console.log(result)
                   let value = await window.web3.utils.fromWei(result)
                   console.log(value)

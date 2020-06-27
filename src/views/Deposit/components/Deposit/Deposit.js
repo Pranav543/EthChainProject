@@ -124,25 +124,24 @@ const Deposit = (props) => {
 					setError((currentState) => ({ ...currentState, ethError: '' }));
 					isErrorProp(false);
 					const a = window.web3.utils.toWei(amount, 'ether');
-					const Ropsten_WEthAddress = '0x7BdDd37621186f1382FD59e1cCAE0316F979a866';
-					let token = Ropsten_WEthAddress;
+					const Goerli_WEthAddress = '0x60D4dB9b534EF9260a88b0BED6c486fe13E604Fc';
+					let token = Goerli_WEthAddress;
 					await window.matic.depositEther(a, { from }).then(async (logs) => {
-						console.log('Deposit on Ropsten:' + logs.transactionHash);
+						console.log('Deposit on Goerli:' + logs.transactionHash);
 						settxHash((txHash = logs.transactionHash));
 						props.txComplete(txHash, 'Deposit', 'ETH');
-						props.txInProcess(txHash)
 					});
 				} else if (token === 'erc20') {
 					setError((currentState) => ({ ...currentState, erc20Error: '' }));
 					isErrorProp(false);
 					const a = window.web3.utils.toWei(amount, 'ether');
-					const Ropsten_Erc20Address = '0xEc5C207897C4378658F52bCCCE0ea648D1f17D65';
-					let token = Ropsten_Erc20Address;
+					const Goerli_Erc20Address = '0x3f152B63Ec5CA5831061B2DccFb29a874C317502';
+					let token = Goerli_Erc20Address;
 					await window.matic.approveERC20TokensForDeposit(token, a, { from }).then(async (logs) => {
-						console.log('Approve on Ropsten:' + logs.transactionHash);
+						console.log('Approve on Goerli:' + logs.transactionHash);
 						await PromiseTimeout(10000);
 						await window.matic.depositERC20ForUser(token, from, amount, { from }).then(async (logs) => {
-							console.log('Deposit on Ropsten:' + logs.transactionHash);
+							console.log('Deposit on Goerli:' + logs.transactionHash);
 							settxHash((txHash = logs.transactionHash));
 							props.txComplete(txHash, 'Deposit', 'ERC20');
 						});
@@ -150,8 +149,8 @@ const Deposit = (props) => {
 				} else if (token === 'erc721') {
 					setError((currentState) => ({ ...currentState, erc721Error: '' }));
 					isErrorProp(false);
-					const Ropsten_Erc721Address = '0x07d799252cf13c01f602779b4dce24f4e5b08bbd';
-					let token = Ropsten_Erc721Address;
+					const Goerli_Erc721Address = '0xfA08B72137eF907dEB3F202a60EfBc610D2f224b';
+					let token = Goerli_Erc721Address;
 					const tokenId = '745';
 					await window.matic.safeDepositERC721Tokens(token, tokenId, { from }).then(async (logs) => {
 						console.log('Deposit on Ropsten:' + logs.transactionHash);
@@ -183,7 +182,7 @@ const Deposit = (props) => {
 		setOpen(true);
 	};
 
-	if(chainID===3){
+	if(chainID===5){
 		return (
 			<Card {...rest} className={clsx(classes.root, className)}>
 				<form>
@@ -238,7 +237,7 @@ const Deposit = (props) => {
 								<Alert severity="success">
 									The transaction was a success! Check it out{' '}
 									<a
-										href={`https://ropsten.etherscan.io/tx/${txHash}`}
+										href={`https://goerli.etherscan.io/tx/${txHash}`}
 										target="_blank"
 										rel="noopener noreferrer"
 									>
@@ -276,7 +275,7 @@ const Deposit = (props) => {
 								<Alert severity="success">
 									The transaction was a success! Check it out{' '}
 									<a
-										href={`https://ropsten.etherscan.io/tx/${txHash}`}
+										href={`https://goerli.etherscan.io/tx/${txHash}`}
 										target="_blank"
 										rel="noopener noreferrer"
 									>
@@ -313,7 +312,7 @@ const Deposit = (props) => {
 								<Alert severity="success">
 									The transaction was a success! Check it out{' '}
 									<a
-										href={`https://ropsten.etherscan.io/tx/${txHash}`}
+										href={`https://goerli.etherscan.io/tx/${txHash}`}
 										target="_blank"
 										rel="noopener noreferrer"
 									>
@@ -330,10 +329,10 @@ const Deposit = (props) => {
 	}
 	else{
 		return(
-			<div>
-				<h1>change network</h1>
-			</div>
-		);
+            <div>
+                <Alert severity="error">Change Network Please!!</Alert>
+            </div>
+        );
 	}
 };
 
