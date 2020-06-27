@@ -50,7 +50,6 @@ const Profile = (props) => {
         
 }
 
-    console.log(address);
 
     const classes = useStyles();
 

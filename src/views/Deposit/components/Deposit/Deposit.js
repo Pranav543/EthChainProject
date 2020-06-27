@@ -140,7 +140,7 @@ const Deposit = (props) => {
 					await window.matic.approveERC20TokensForDeposit(token, a, { from }).then(async (logs) => {
 						console.log('Approve on Goerli:' + logs.transactionHash);
 						await PromiseTimeout(10000);
-						await window.matic.depositERC20ForUser(token, from, amount, { from }).then(async (logs) => {
+						await window.matic.depositERC20ForUser(token, from, a, { from }).then(async (logs) => {
 							console.log('Deposit on Goerli:' + logs.transactionHash);
 							settxHash((txHash = logs.transactionHash));
 							props.txComplete(txHash, 'Deposit', 'ERC20');

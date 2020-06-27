@@ -54,23 +54,20 @@ const TotalProfit = props => {
       window.web3.eth.net.getId().then((result)=>{
         // console.log(typeof(window.chainID))
         window.chainID = result;
-        console.log(window.chainID)
+
         if(window.web3 !== undefined || window.matic !== undefined){
           try{
             if(window.chainID !== undefined){
               if(window.chainID===80001){
                 window.matic.balanceOfERC20(window.from,Matic_ERC20Address,{from:window.from,parent:false}).then(async(result)=>{
                   let value = await window.web3.utils.fromWei(result)
-                  console.log(value)
+
                   setAmount(value)
                 })
               }
               else if(window.chainID===5){
-                console.log(from)
                 window.matic.balanceOfERC20(window.from,Goerli_ERC20Address,{from:window.from,parent:true}).then(async (result)=>{
-                  console.log(result)
                   let value = await window.web3.utils.fromWei(result)
-                  console.log(value)
                   setAmount(value)
                 })
               }

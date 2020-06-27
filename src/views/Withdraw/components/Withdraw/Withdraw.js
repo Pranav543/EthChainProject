@@ -22,8 +22,6 @@ import {
 } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { txInProcess, txOutProcess, txComplete } from './../../../../actions';
-const Network = require("@maticnetwork/meta/network");
-const Matic = require("@maticnetwork/maticjs");
 
 
 const useStyles = makeStyles((theme) => ({
@@ -72,8 +70,6 @@ const Withdraw = (props) => {
 
 	const [ count, setCount ] = useState(0);
 
-	const [ matic, setMatic ] = useState({})
-
 	const [ errorProp, isErrorProp ] = useState(false);
 
 	const [ { ethError, erc20Error, erc721Error }, setError ] = useState({
@@ -90,7 +86,7 @@ const Withdraw = (props) => {
 				setChainID(result)
 			})
 		});
-	},{});
+	},0);
 
 	const isNatural = (n) => {
 		return n > 0 && Math.floor(n) === +n;

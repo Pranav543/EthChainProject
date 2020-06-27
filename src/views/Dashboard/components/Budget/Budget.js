@@ -67,15 +67,12 @@ const Budget = props => {
             if(window.chainID !== undefined && from !== []){
               try{
                 if(window.chainID===80001){
-                  console.log(typeof(window.from))
                   window.matic.balanceOfERC721(window.from,Matic_ERC721Address,{from:window.from,parent:false}).then(async(result)=>{
-                    console.log(result)
                     setAmount(result)
                   })
                 }
                 else if(window.chainID===5){
                   window.matic.balanceOfERC721(window.from,Goerli_ERC721Address,{from:window.from,parent:true}).then(async (result)=>{
-                    console.log(result)
                     setAmount(result)
                   })
                 }
