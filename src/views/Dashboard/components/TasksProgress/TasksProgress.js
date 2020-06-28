@@ -74,12 +74,16 @@ const TasksProgress = props => {
                   window.matic.balanceOfERC20(a,Matic_WEthAddress,{from:window.from,parent:false}).then(async (result)=>{
                     let value = await window.web3.utils.fromWei(result)
                     setAmount(value)
+                  }).catch((err)=>{
+                    console.log('again')
                   })
                 }
                 else if(window.chainID===5){
                   window.web3.eth.getBalance(from).then(async(result)=>{
                     let value = await window.web3.utils.fromWei(result)
                     setAmount(value)
+                  }).catch((err)=>{
+                    console.log('again')
                   })
                 }
                 else{
