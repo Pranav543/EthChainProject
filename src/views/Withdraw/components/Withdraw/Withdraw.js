@@ -67,6 +67,8 @@ const Withdraw = (props) => {
 
 	const [ open, setOpen ] = useState(false);
 
+	const [ tokenID, setTokenID ] = useState('')
+
 	const [ amount, setAmount ] = useState('');
 
 	let [ start, setStart ] = useState(false);
@@ -285,11 +287,14 @@ const Withdraw = (props) => {
 		catch(err){
 			alert(err)
 		}
-		changeloading((prevState) => (loading = !prevState));
 	};
 
 	const handleAmountChange = (event) => {
 		setAmount(event.target.value);
+	};
+
+	const handleTokenChange = (event) => {
+		setTokenID(event.target.value);
 	};
 
 	const handleChange = (event) => {
@@ -397,6 +402,20 @@ const Withdraw = (props) => {
 										id="outlined-error-helper-text"
 										helperText={erc721Error}
 									/>
+								</CardContent>
+
+								<CardContent>
+								<TextField
+									fullWidth
+									error={errorProp}
+									label="TokenID"
+									name="TokenID"
+									value={tokenID}
+									onChange={handleTokenChange}
+									variant="outlined"
+									id="outlined-error-helper-text"
+									helperText={erc721Error}
+								/>
 								</CardContent>
 	
 								<Divider />

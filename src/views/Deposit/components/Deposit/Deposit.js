@@ -57,6 +57,8 @@ const Deposit = (props) => {
 
 	const [ token, setToken ] = useState('');
 
+	const [ tokenID, setTokenID ] = useState('')
+
 	const [ from, setFrom ] = useState([]);
 
 	const [ chainID, setChainID ] = useState(0)
@@ -156,8 +158,7 @@ const Deposit = (props) => {
 					isErrorProp(false);
 					const Goerli_Erc721Address = '0xfA08B72137eF907dEB3F202a60EfBc610D2f224b';
 					let token = Goerli_Erc721Address;
-					const tokenId = '567';
-					await window.matic.safeDepositERC721Tokens(token, tokenId, { from }).then(async (logs) => {
+					await window.matic.safeDepositERC721Tokens(token, tokenID, { from }).then(async (logs) => {
 						console.log('Deposit on Ropsten:' + logs.transactionHash);
 						settxHash((txHash = logs.transactionHash));
 						props.txComplete(txHash, 'Deposit', 'ERC721');
@@ -173,6 +174,10 @@ const Deposit = (props) => {
 
 	const handleAmountChange = (event) => {
 		setAmount(event.target.value);
+	};
+
+	const handleTokenChange = (event) => {
+		setTokenID(event.target.value);
 	};
 
 	const handleChange = (event) => {
@@ -300,6 +305,20 @@ const Deposit = (props) => {
 									name="amount"
 									value={amount}
 									onChange={handleAmountChange}
+									variant="outlined"
+									id="outlined-error-helper-text"
+									helperText={erc721Error}
+								/>
+							</CardContent>
+
+							<CardContent>
+								<TextField
+									fullWidth
+									error={errorProp}
+									label="TokenID"
+									name="TokenID"
+									value={tokenID}
+									onChange={handleTokenChange}
 									variant="outlined"
 									id="outlined-error-helper-text"
 									helperText={erc721Error}

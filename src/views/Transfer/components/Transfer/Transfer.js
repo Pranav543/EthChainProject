@@ -50,6 +50,8 @@ const Transfer = (props) => {
 
 	let [ loading, changeloading ] = useState(false);
 
+	const [ tokenID, setTokenID ] = useState('')
+
 	const [ from, setFrom ] = useState([]);
 
 	const [ token, setToken ] = React.useState('');
@@ -152,8 +154,7 @@ const Transfer = (props) => {
 					isErrorProp(false);
 					const Matic_Erc721Address = '0x33FC58F12A56280503b04AC7911D1EceEBcE179c';
 					let token = Matic_Erc721Address;
-					const tokenId = '746';
-					await window.matic.transferERC721Tokens(token, TransferTo, tokenId, { from }).then(async (logs) => {
+					await window.matic.transferERC721Tokens(token, TransferTo, tokenID, { from }).then(async (logs) => {
 						console.log('Transfer on Matic:' + logs.transactionHash);
 						settxHash((txHash = logs.transactionHash));
 						props.txComplete(txHash, 'Transfer', 'ERC721');
@@ -173,6 +174,10 @@ const Transfer = (props) => {
 
 	const handleAmountChange = (event) => {
 		setAmount(event.target.value);
+	};
+
+	const handleTokenChange = (event) => {
+		setTokenID(event.target.value);
 	};
 
 	const handleChange = (event) => {
@@ -278,6 +283,7 @@ const Transfer = (props) => {
 									helperText={erc20Error}
 								/>
 							</CardContent>
+							
 	
 							<Divider />
 							<CardActions>
@@ -314,6 +320,20 @@ const Transfer = (props) => {
 									name="amount"
 									value={amount}
 									onChange={handleAmountChange}
+									variant="outlined"
+									id="outlined-error-helper-text"
+									helperText={erc721Error}
+								/>
+							</CardContent>
+
+							<CardContent>
+								<TextField
+									fullWidth
+									error={errorProp}
+									label="TokenID"
+									name="TokenID"
+									value={tokenID}
+									onChange={handleTokenChange}
 									variant="outlined"
 									id="outlined-error-helper-text"
 									helperText={erc721Error}
