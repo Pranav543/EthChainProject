@@ -154,6 +154,7 @@ const Withdraw = (props) => {
 		if (err === false) {
 			let t = '';
 			if (token === 'eth' || token === 'erc20') {
+				
 				setError((currentState) => ({ ...currentState, ethError: '', erc20Error: '' }));
 				changeloading((prevState) => (loading = !prevState));
 				isErrorProp(false);
@@ -164,14 +165,16 @@ const Withdraw = (props) => {
 				}
 				const a = window.web3.utils.toWei(amount, 'ether');
 				console.log(a)
+
 				window.matic.startWithdraw(t, a, { from }).then((logs) => {
-					
 					setInitxHash((initTxHash = logs.transactionHash));
 					props.txInProcess(initTxHash,token);
-
 					token === 'eth' && props.txComplete(initTxHash, 'Initial Withdraw', 'ETH');
 					token === 'erc20' && props.txComplete(initTxHash, 'Initial Withdraw', 'ERC20');
 					changeloading((prevState) => (loading = !prevState));
+				}).catch((err)=>{
+					changeloading((prevState) => (loading = !prevState));
+					alert(err)
 				});
 			} else if (token === 'erc721') {
 				setError((currentState) => ({ ...currentState, erc721Error: '' }));
@@ -184,6 +187,10 @@ const Withdraw = (props) => {
 					props.txInProcess(initTxHash,token);
 					props.txComplete(initTxHash, 'Initial Withdraw', 'ERC721');
 					changeloading((prevState) => (loading = !prevState));
+				}).catch((err)=>{
+					
+					alert(err)
+					changeloading((prevState) => (loading = !prevState));
 				});
 			}
 			console.log('Done');
@@ -192,8 +199,6 @@ const Withdraw = (props) => {
 	};
 
 	const ConfWithdraw = async () => {
-		
-		try{
 			const network = new Network("testnet", "mumbai");
 			const MainNetwork = network.Main;
 			const matic = new Matic({
@@ -233,7 +238,10 @@ const Withdraw = (props) => {
 									props.txProcess[0].currency === 'eth' && props.txComplete(exitTxHash, 'Exit Withdraw', 'ETH');
 									changeloading((prevState) => (loading = !prevState));
 									props.txOutProcess();
-								});
+								})
+						}).catch((err)=>{
+							changeloading((prevState) => (loading = !prevState));
+							alert(err)
 						});
 				} else {
 					changeloading((prevState) => (loading = !prevState));
@@ -259,6 +267,9 @@ const Withdraw = (props) => {
 									changeloading((prevState) => (loading = !prevState));
 									props.txOutProcess();
 								});
+						}).catch((err)=>{
+							changeloading((prevState) => (loading = !prevState));
+							alert(err)
 						});
 				}
 			} else if (props.txProcess[0].currency === 'erc721') {
@@ -281,12 +292,11 @@ const Withdraw = (props) => {
 							changeloading((prevState) => (loading = !prevState));
 							props.txOutProcess();
 						});
+				}).catch((err)=>{
+					changeloading((prevState) => (loading = !prevState));
+					alert(err)
 				});
 			}
-		}
-		catch(err){
-			alert(err)
-		}
 	};
 
 	const handleAmountChange = (event) => {
