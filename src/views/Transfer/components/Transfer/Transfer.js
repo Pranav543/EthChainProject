@@ -251,7 +251,7 @@ const Transfer = (props) => {
 								<Alert severity="success">
 									The transaction was a success! Check it out{' '}
 									<a
-										href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
+										href={`https://mumbai-explorer.matic.today/tx/${txHash}/token_transfers`}
 										target="_blank"
 										rel="noopener noreferrer"
 									>
