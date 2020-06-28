@@ -1,4 +1,4 @@
-##### MaticDex
+# MaticDex
 
 ## Getting Started
 
@@ -30,11 +30,11 @@ npm i
 npm start
 ```
 
-## NOTE: 1.If you are using the application for the first time, you will have to refresh the page again after enabling metamask for sucessful implementation    
+##### NOTE: 1.If you are using the application for the first time, you will have to refresh the page again after enabling metamask for sucessful implementation    
 
 The contract has already been deployed so you need not need to deploy it from your side
 
-#Token addresses for Goerli and Mumbai Testnet:
+##### Token addresses for Goerli and Mumbai Testnet:
 
 "Goerli_WEthAddress": "0x60D4dB9b534EF9260a88b0BED6c486fe13E604Fc"
 "Matic_WEthAddress": "0x4DfAe612aaCB5b448C12A591cD0879bFa2e51d62"
@@ -48,7 +48,7 @@ The contract has already been deployed so you need not need to deploy it from yo
 Add these token address to your metamask.
 
 
-#Make sure you have balance in your wallet in Goerli, Ropsten and Matic Mumbai Testnet. The faucet links are given below
+#### Make sure you have balance in your wallet in Goerli, Ropsten and Matic Mumbai Testnet. The faucet links are given below
 
 Goerli: https://goerli-faucet.slock.it/
 Ropsten: https://faucet.ropsten.be/
