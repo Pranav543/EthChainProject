@@ -48,19 +48,24 @@ const TotalUsers = props => {
   const [ network, setNetwork ] = useState('')
 
   useEffect(() => {
-		window.web3.eth.net.getId().then((result)=>{
-      if(result===80001){
-        setNetwork('TestNet Mumbai')
-      }
-      else if(result===5){
-        setNetwork('Goerli')
-      }
-      else{
-        setNetwork('None')
-      }
-      // console.log(typeof(window.chainID))
-      window.chainID = result;
-    })
+		try{
+      window.web3.eth.net.getId().then((result)=>{
+        if(result===80001){
+          setNetwork('TestNet Mumbai')
+        }
+        else if(result===5){
+          setNetwork('Goerli')
+        }
+        else{
+          setNetwork('None')
+        }
+        // console.log(typeof(window.chainID))
+        window.chainID = result;
+      })
+    }
+    catch(err){
+      console.log("again")
+    }
 	});
 
   

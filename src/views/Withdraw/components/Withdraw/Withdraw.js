@@ -23,6 +23,12 @@ import {
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { txInProcess, txOutProcess, txComplete } from './../../../../actions';
 
+const Network = require("@maticnetwork/meta/network");
+const Matic = require("@maticnetwork/maticjs");
+
+
+
+
 
 const useStyles = makeStyles((theme) => ({
 	root: {},
@@ -37,8 +43,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Accounts = async () => {
-	const accounts = await window.web3.eth.getAccounts();
-	return accounts[0];
+	try{
+        const accounts = await window.web3.eth.getAccounts();
+    return accounts[0];
+    }
+    catch(err){
+        console.log('again')
+    }
 };
 
 const Withdraw = (props) => {
@@ -149,7 +160,7 @@ const Withdraw = (props) => {
 					t = '0x2d7882beDcbfDDce29Ba99965dd3cdF7fcB10A1e';
 				}
 				const a = window.web3.utils.toWei(amount, 'ether');
-				console.log(t)
+				console.log(a)
 				window.matic.startWithdraw(t, a, { from }).then((logs) => {
 					
 					setInitxHash((initTxHash = logs.transactionHash));
@@ -177,23 +188,36 @@ const Withdraw = (props) => {
 	};
 
 	const ConfWithdraw = async () => {
+		
 		try{
+			const network = new Network("testnet", "mumbai");
+			const MainNetwork = network.Main;
+			const matic = new Matic({
+			  maticProvider: "https://rpc-mumbai.matic.today",
+			  parentProvider: window.web3,
+			  rootChain: MainNetwork.Contracts.RootChainProxy,
+			  withdrawManager: MainNetwork.Contracts.WithdrawManagerProxy,
+			  depositManager: MainNetwork.Contracts.DepositManagerProxy,
+			  registry: MainNetwork.Contracts.Registry
+			});
+			await matic.initialize()
+			changeloading((prevState) => (loading = !prevState));
 			let t;
+			let w;
 			let transactionHash = props.txProcess[0].txHash
 			if (props.txProcess[0].currency === 'eth' || props.txProcess[0].currency === 'erc20') {
 				if (props.txProcess[0].currency === 'eth') {
 					console.log('Hash: ',typeof(transactionHash))
 					console.log('Token: ',props.txProcess[0].currency)
-					window.matic
+					matic
 						.withdraw(transactionHash, {
 							from
 						})
 						.then((logs) => {
 							console.log('Done');
 							console.log(logs.transactionHash);
-							setConfirmTxHash((confirmTxHash = logs.transactionHash));
-							props.txProcess[0].currency === 'eth' && props.txComplete(confirmTxHash, 'Confirm Withdraw', 'ETH');
-							props.txProcess[0].currency === 'erc20' && props.txComplete(confirmTxHash, 'Confirm Withdraw', 'ERC20');
+							w = logs.transactionHash
+							props.txProcess[0].currency === 'eth' && props.txComplete(w, 'Confirm Withdraw', 'ETH');
 							t = '0x60D4dB9b534EF9260a88b0BED6c486fe13E604Fc';
 							window.matic
 								.processExits(t, {
@@ -201,21 +225,22 @@ const Withdraw = (props) => {
 								})
 								.then((logs) => {
 									console.log(logs.transactionHash);
+									setConfirmTxHash((confirmTxHash = w))
+									setInitxHash((initTxHash = props.txProcess[0].txHash));
 									setExitTxHash((exitTxHash = logs.transactionHash));
 									props.txProcess[0].currency === 'eth' && props.txComplete(exitTxHash, 'Exit Withdraw', 'ETH');
-									props.txProcess[0].currency === 'erc20' && props.txComplete(exitTxHash, 'Exit Withdraw', 'ERC20');
+									props.txOutProcess();
 								});
 						});
 				} else {
-					window.matic
+					matic
 						.withdraw(transactionHash, {
 							from
 						})
 						.then((logs) => {
 							console.log(logs.transactionHash);
-							setConfirmTxHash((confirmTxHash = logs.transactionHash));
-							props.txProcess[0].currency === 'eth' && props.txComplete(confirmTxHash, 'Confirm Withdraw', 'ETH');
-							props.txProcess[0].currency === 'erc20' && props.txComplete(confirmTxHash, 'Confirm Withdraw', 'ERC20');
+							w = logs.transactionHash
+							props.txProcess[0].currency === 'erc20' && props.txComplete(w, 'Confirm Withdraw', 'ERC20');
 							t = '0x3f152B63Ec5CA5831061B2DccFb29a874C317502';
 							window.matic
 								.processExits(t, {
@@ -223,18 +248,19 @@ const Withdraw = (props) => {
 								})
 								.then((logs) => {
 									console.log(logs.transactionHash);
+									setInitxHash((initTxHash = props.txProcess[0].txHash));
+									setConfirmTxHash((confirmTxHash = w));
 									setExitTxHash((exitTxHash = logs.transactionHash));
-									props.txProcess[0].currency === 'eth' && props.txComplete(exitTxHash, 'Exit Withdraw', 'ETH');
 									props.txProcess[0].currency === 'erc20' && props.txComplete(exitTxHash, 'Exit Withdraw', 'ERC20');
 									props.txOutProcess();
 								});
 						});
 				}
 			} else if (props.txProcess[0].currency === 'erc721') {
-				window.matic.withdrawNFT(transactionHash, { from }).then((logs) => {
+				matic.withdrawNFT(transactionHash, { from }).then((logs) => {
 					console.log(logs.transactionHash);
-					setConfirmTxHash((confirmTxHash = logs.transactionHash));
-					props.txComplete(confirmTxHash, 'Confirm Withdraw', 'ERC721');
+					w = logs.transactionHash
+					props.txComplete(w, 'Confirm Withdraw', 'ERC721');
 					t = '0xfA08B72137eF907dEB3F202a60EfBc610D2f224b';
 					window.matic
 						.processExits(t, {
@@ -242,6 +268,8 @@ const Withdraw = (props) => {
 						})
 						.then((logs) => {
 							console.log(logs.transactionHash);
+							setInitxHash((initTxHash = props.txProcess[0].txHash));
+							setConfirmTxHash((confirmTxHash = w));
 							setExitTxHash((exitTxHash = logs.transactionHash));
 							props.txComplete(exitTxHash, 'Exit Withdraw', 'ERC721');
 							props.txOutProcess();
@@ -252,7 +280,7 @@ const Withdraw = (props) => {
 		catch(err){
 			alert(err)
 		}
-		
+		changeloading((prevState) => (loading = !prevState));
 	};
 
 	const handleAmountChange = (event) => {
@@ -384,7 +412,7 @@ const Withdraw = (props) => {
 		else{
 			return(
 				<div>
-					<Alert severity="error">Change Network Please!!</Alert>
+					<Alert severity="error">Change Network to Matic Mumbai!!</Alert>
 				</div>
 			);
 		}
@@ -425,7 +453,7 @@ const Withdraw = (props) => {
 							</CardActions>
 							{initTxHash !== '' && (
 								<Alert severity="success">
-									The transaction was a success! Check it out{' '}
+									The 1st stage of withdraw was a success! Check it out{' '}
 									<a
 										href={`https://mumbai-explorer.matic.today/tx/${initTxHash}/token_transfers`}
 										target="_blank"
@@ -438,7 +466,7 @@ const Withdraw = (props) => {
 							<Divider />
 							{confirmTxHash !== '' && (
 								<Alert severity="success">
-									The transaction was a success! Check it out{' '}
+									The 2nd stage of withdraw was a success! Check it out{' '}
 									<a
 										href={`https://goerli.etherscan.io/tx/${confirmTxHash}`}
 										target="_blank"
@@ -451,7 +479,7 @@ const Withdraw = (props) => {
 							<Divider />
 							{exitTxHash !== '' && (
 								<Alert severity="success">
-									The transaction was a success! Check it out{' '}
+									The 3rd stage of withdraw was a success! Check it out{' '}
 									<a
 										href={`https://goerli.etherscan.io/tx/${exitTxHash}`}
 										target="_blank"
@@ -469,7 +497,7 @@ const Withdraw = (props) => {
 		else{
 			return(
 				<div>
-					<Alert severity="error">Change Network Please!!</Alert>
+					<Alert severity="error">Change Network to Goerli Testmet!!</Alert>
 				</div>
 			);
 		}

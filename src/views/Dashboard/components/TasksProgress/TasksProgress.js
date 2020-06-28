@@ -38,8 +38,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Accounts = async () => {
-	const accounts = await window.web3.eth.getAccounts();
-	return accounts[0];
+
+  try{
+        const accounts = await window.web3.eth.getAccounts();
+    return accounts[0];
+    }
+    catch(err){
+        console.log('again')
+    }
+
 };
 
 const TasksProgress = props => {
@@ -55,35 +62,40 @@ const TasksProgress = props => {
     Accounts().then((result) => {
 			const account = result;
       setFrom(account);
-      window.web3.eth.net.getId().then((result)=>{
-        // console.log(typeof(window.chainID))
-        window.chainID = result;
-        if(window.web3 !== undefined || window.matic !== undefined){
-          try{
-            if(window.chainID !== undefined){
-              if(window.chainID===80001){
-                let a = window.from
-                window.matic.balanceOfERC20(a,Matic_WEthAddress,{from:window.from,parent:false}).then(async (result)=>{
-                  let value = await window.web3.utils.fromWei(result)
-                  setAmount(value)
-                })
-              }
-              else if(window.chainID===5){
-                window.web3.eth.getBalance(from).then(async(result)=>{
-                  let value = await window.web3.utils.fromWei(result)
-                  setAmount(value)
-                })
-              }
-              else{
-                console.log("Change network")
+      try{
+        window.web3.eth.net.getId().then((result)=>{
+          // console.log(typeof(window.chainID))
+          window.chainID = result;
+          if(window.web3 !== undefined || window.matic !== undefined){
+            try{
+              if(window.chainID !== undefined){
+                if(window.chainID===80001){
+                  let a = window.from
+                  window.matic.balanceOfERC20(a,Matic_WEthAddress,{from:window.from,parent:false}).then(async (result)=>{
+                    let value = await window.web3.utils.fromWei(result)
+                    setAmount(value)
+                  })
+                }
+                else if(window.chainID===5){
+                  window.web3.eth.getBalance(from).then(async(result)=>{
+                    let value = await window.web3.utils.fromWei(result)
+                    setAmount(value)
+                  })
+                }
+                else{
+                  console.log("Change network")
+                }
               }
             }
+            catch(err){
+              console.log(err)
+            }
           }
-          catch(err){
-            console.log(err)
-          }
-        }
-      })
+        })
+      }
+      catch(err){
+        console.log('again')
+      }
       
 		});
   });

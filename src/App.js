@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 
@@ -26,15 +26,19 @@ validate.validators = {
   ...validators
 };
 
+const App = () => {
 
-export default class App extends Component {
-
-  render() {
     
+  let [ reload, setReload ] = useState(false)
+
+  useEffect(()=>{
     if (window.ethereum) {
       window.web3 = new Web3(window.ethereum)
       try {
-        window.ethereum.enable();
+        window.ethereum.enable().then((result)=>{
+          console.log(reload)
+          setReload((prevReload)=>(reload=!prevReload))
+        });
       } catch (error) {
         alert('Please allow access for the app to work');
       }
@@ -43,12 +47,9 @@ export default class App extends Component {
     } else {
       console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
     }
-
-    
-
+  
     const network = new Network("testnet", "mumbai");
     const MainNetwork = network.Main;
-
     window.matic = new Matic({
       maticProvider: window.web3,
       parentProvider: window.web3,
@@ -57,8 +58,7 @@ export default class App extends Component {
       depositManager: MainNetwork.Contracts.DepositManagerProxy,
       registry: MainNetwork.Contracts.Registry
     });
-
-
+  },false)
 
     return (
       <ThemeProvider theme={theme}>
@@ -67,5 +67,8 @@ export default class App extends Component {
         </Router>
       </ThemeProvider>
     );
-  }
 }
+
+
+
+export default App

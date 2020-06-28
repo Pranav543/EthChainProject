@@ -34,8 +34,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Accounts = async () => {
-	const accounts = await window.web3.eth.getAccounts();
-	return accounts[0];
+	try{
+        const accounts = await window.web3.eth.getAccounts();
+    return accounts[0];
+    }
+    catch(err){
+        console.log('again')
+    }
 };
 
 const Transfer = (props) => {
@@ -327,7 +332,7 @@ const Transfer = (props) => {
 								<Alert severity="success">
 									The transaction was a success! Check it out{' '}
 									<a
-										href={`https://testnetv3-explorer.matic.network/tx/${txHash}/token_transfers`}
+										href={`https://mumbai-explorer.matic.today/tx/${txHash}/token_transfers`}
 										target="_blank"
 										rel="noopener noreferrer"
 									>
@@ -344,7 +349,7 @@ const Transfer = (props) => {
 	else{
 		return(
             <div>
-                <Alert severity="error">Change Network Please!!</Alert>
+                <Alert severity="error">Change Network to Matic Mumbai!!</Alert>
             </div>
         );
 	}

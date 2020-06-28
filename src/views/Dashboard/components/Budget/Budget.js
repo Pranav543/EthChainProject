@@ -40,8 +40,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Accounts = async () => {
-	const accounts = await window.web3.eth.getAccounts();
-	return accounts[0];
+    try{
+        const accounts = await window.web3.eth.getAccounts();
+    return accounts[0];
+    }
+    catch(err){
+        console.log('again')
+    }
 };
 
 const Budget = props => {

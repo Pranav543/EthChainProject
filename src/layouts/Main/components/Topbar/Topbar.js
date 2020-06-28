@@ -23,22 +23,42 @@ const Topbar = (props) => {
 
 	const classes = useStyles();
 
-	return (
-		<AppBar {...rest} className={clsx(classes.root, className)}>
-			<Toolbar>
-				<RouterLink to="/">
-					<h1 style={{ color: 'white' }}>EtherMen</h1>
-				</RouterLink>
-				<div className={classes.flexGrow} />
-
-				<Hidden lgUp>
-					<IconButton color="inherit" onClick={onSidebarOpen}>
-						<MenuIcon />
-					</IconButton>
-				</Hidden>
-			</Toolbar>
-		</AppBar>
-	);
+	if(window.web3!==undefined){
+		return (
+			<AppBar {...rest} className={clsx(classes.root, className)}>
+				<Toolbar>
+					<RouterLink to="/dashboard">
+						<h1 style={{ color: 'white' }}>EtherMen</h1>
+					</RouterLink>
+					<div className={classes.flexGrow} />
+	
+					<Hidden lgUp>
+						<IconButton color="inherit" onClick={onSidebarOpen}>
+							<MenuIcon />
+						</IconButton>
+					</Hidden>
+				</Toolbar>
+			</AppBar>
+		);
+	}
+	else{
+		return (
+			<AppBar {...rest} className={clsx(classes.root, className)}>
+				<Toolbar>
+					<RouterLink to="/">
+						<h1 style={{ color: 'white' }}>EtherMen</h1>
+					</RouterLink>
+					<div className={classes.flexGrow} />
+	
+					<Hidden lgUp>
+						<IconButton color="inherit" onClick={onSidebarOpen}>
+							<MenuIcon />
+						</IconButton>
+					</Hidden>
+				</Toolbar>
+			</AppBar>
+		);
+	}
 };
 
 Topbar.propTypes = {
