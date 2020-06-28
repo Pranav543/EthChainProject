@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 const Accounts = async () => {
     try{
         const accounts = await window.web3.eth.getAccounts();
-    return accounts[0];
+        return accounts[0];
     }
     catch(err){
         console.log('again')
@@ -47,6 +47,7 @@ const Profile = (props) => {
             const account = result;
             setAddress(account);
             window.from = account
+            console.log(window.from)
         });
     });
 

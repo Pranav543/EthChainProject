@@ -2,14 +2,8 @@ import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import {
-  Card,
-  CardContent,
-  Grid,
-  Typography,
-  Avatar
-} from '@material-ui/core';
-import InsertChartIcon from '@material-ui/icons/InsertChartOutlined';
+import { Card, CardContent, Grid, Typography, Avatar } from '@material-ui/core';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -23,8 +17,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 700
   },
   avatar: {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
+    backgroundColor: theme.palette.error.main,
     height: 56,
     width: 56
   },
@@ -32,56 +25,62 @@ const useStyles = makeStyles(theme => ({
     height: 32,
     width: 32
   },
-  progress: {
-    marginTop: theme.spacing(3)
+  difference: {
+    marginTop: theme.spacing(2),
+    display: 'flex',
+    alignItems: 'center'
+  },
+  differenceIcon: {
+    color: theme.palette.error.dark
+  },
+  differenceValue: {
+    color: theme.palette.error.dark,
+    marginRight: theme.spacing(1)
   }
 }));
 
 const Accounts = async () => {
-
-  try{
+    try{
         const accounts = await window.web3.eth.getAccounts();
     return accounts[0];
     }
     catch(err){
         console.log('again')
     }
-
 };
 
-const TasksProgress = props => {
+const ERC721 = props => {
   const { className, ...rest } = props;
 
-  const [ amount, setAmount ] = useState('')
+  const [ amount, setAmount ] = useState("")
 
   const [ from, setFrom ] = useState([]);
 
-  let Matic_WEthAddress = "0x4DfAe612aaCB5b448C12A591cD0879bFa2e51d62"
+  let Matic_ERC721Address = "0x33FC58F12A56280503b04AC7911D1EceEBcE179c"
+  let Goerli_ERC721Address = "0xfA08B72137eF907dEB3F202a60EfBc610D2f224b"
+
+  const classes = useStyles();
 
   useEffect(() => {
     Accounts().then((result) => {
 			const account = result;
       setFrom(account);
-      try{
-        window.web3.eth.net.getId().then((result)=>{
-          // console.log(typeof(window.chainID))
-          window.chainID = result;
-          if(window.web3 !== undefined || window.matic !== undefined){
-            try{
-              if(window.chainID !== undefined){
+      window.web3.eth.net.getId().then((result)=>{
+        // console.log(typeof(window.chainID))
+        window.chainID = result;
+        if(window.web3 !== undefined || window.matic !== undefined){
+            if(window.chainID !== undefined && from !== []){
+              try{
                 if(window.chainID===80001){
-                  let a = window.from
-                  window.matic.balanceOfERC20(a,Matic_WEthAddress,{from:window.from,parent:false}).then(async (result)=>{
-                    let value = await window.web3.utils.fromWei(result)
-                    setAmount(value)
+                  window.matic.balanceOfERC721(window.from,Matic_ERC721Address,{from:window.from,parent:false}).then(async(result)=>{
+                    setAmount(result)
                   }).catch((err)=>{
                     console.log('again')
                   })
                 }
                 else if(window.chainID===5){
-                  window.web3.eth.getBalance(from).then(async(result)=>{
-                    let value = await window.web3.utils.fromWei(result)
-                    setAmount(value)
+                  window.matic.balanceOfERC721(window.from,Goerli_ERC721Address,{from:window.from,parent:true}).then(async (result)=>{
+                    setAmount(result)
                   }).catch((err)=>{
                     console.log('again')
                   })
@@ -90,22 +89,18 @@ const TasksProgress = props => {
                   console.log("Change network")
                 }
               }
+              catch(err){
+                console.log(err)
+              }
+              
             }
-            catch(err){
-              console.log(err)
-            }
-          }
-        })
-      }
-      catch(err){
-        console.log('again')
-      }
+          
+        }
+      })
       
 		});
-  });
+  })
 
-
-  const classes = useStyles();
 
   return (
     <Card
@@ -124,14 +119,14 @@ const TasksProgress = props => {
               gutterBottom
               variant="body2"
             >
-              Ether depositted
+              ERC721 depositted
             </Typography>
-            <Typography variant="h3">{amount}</Typography>
+            <Typography variant="h2">{amount}</Typography>
           </Grid>
           <Grid item>
-            <Avatar className={classes.avatar}>
-              <InsertChartIcon className={classes.icon} />
-            </Avatar>
+          <Avatar className={classes.avatar}>
+							<AttachMoneyIcon className={classes.icon} />
+						</Avatar>
           </Grid>
         </Grid>
       </CardContent>
@@ -139,8 +134,8 @@ const TasksProgress = props => {
   );
 };
 
-TasksProgress.propTypes = {
+ERC721.propTypes = {
   className: PropTypes.string
 };
 
-export default TasksProgress;
+export default ERC721;

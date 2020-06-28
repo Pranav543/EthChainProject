@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { Component} from 'react';
 import { Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 
@@ -26,19 +26,14 @@ validate.validators = {
   ...validators
 };
 
-const App = () => {
+export default class App extends Component{
 
-    
-  let [ reload, setReload ] = useState(false)
-
-  useEffect(()=>{
+  async componentDidMount(){
+    let a = 0;
     if (window.ethereum) {
       window.web3 = new Web3(window.ethereum)
       try {
-        window.ethereum.enable().then((result)=>{
-          console.log(reload)
-          setReload((prevReload)=>(reload=!prevReload))
-        });
+        window.ethereum.enable()
       } catch (error) {
         alert('Please allow access for the app to work');
       }
@@ -58,7 +53,11 @@ const App = () => {
       depositManager: MainNetwork.Contracts.DepositManagerProxy,
       registry: MainNetwork.Contracts.Registry
     });
-  },false)
+  }
+
+  render(){
+
+    
 
     return (
       <ThemeProvider theme={theme}>
@@ -67,8 +66,6 @@ const App = () => {
         </Router>
       </ThemeProvider>
     );
+
+  }  
 }
-
-
-
-export default App

@@ -232,7 +232,7 @@ const Deposit = (props) => {
 	
 							<Divider />
 							<CardActions>
-								<Button color="primary" variant="outlined" onClick={deposit}>
+								<Button color="primary" variant="outlined" onClick={deposit} disabled={loading}>
 									Deposit
 								</Button>
 	

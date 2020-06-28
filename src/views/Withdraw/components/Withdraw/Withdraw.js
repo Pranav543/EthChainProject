@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
 const Accounts = async () => {
 	try{
         const accounts = await window.web3.eth.getAccounts();
-    return accounts[0];
+    	return accounts[0];
     }
     catch(err){
         console.log('again')
@@ -93,6 +93,7 @@ const Withdraw = (props) => {
 		Accounts().then((result) => {
 			const account = result;
 			setFrom(account);
+			console.log("ac:",window.from)
 			window.web3.eth.net.getId().then((result)=>{
 				setChainID(result)
 			})
@@ -149,10 +150,10 @@ const Withdraw = (props) => {
 	const InitWithdraw = async () => {
 		const err = validate();
 		if (err === false) {
-			changeloading((prevState) => (loading = !prevState));
 			let t = '';
 			if (token === 'eth' || token === 'erc20') {
 				setError((currentState) => ({ ...currentState, ethError: '', erc20Error: '' }));
+				changeloading((prevState) => (loading = !prevState));
 				isErrorProp(false);
 				if (token === 'eth') {
 					t = '0x4DfAe612aaCB5b448C12A591cD0879bFa2e51d62';
@@ -168,6 +169,7 @@ const Withdraw = (props) => {
 
 					token === 'eth' && props.txComplete(initTxHash, 'Initial Withdraw', 'ETH');
 					token === 'erc20' && props.txComplete(initTxHash, 'Initial Withdraw', 'ERC20');
+					changeloading((prevState) => (loading = !prevState));
 				});
 			} else if (token === 'erc721') {
 				setError((currentState) => ({ ...currentState, erc721Error: '' }));
@@ -179,10 +181,10 @@ const Withdraw = (props) => {
 					setInitxHash((initTxHash = logs.transactionHash));
 					props.txInProcess(initTxHash,token);
 					props.txComplete(initTxHash, 'Initial Withdraw', 'ERC721');
+					changeloading((prevState) => (loading = !prevState));
 				});
 			}
 			console.log('Done');
-			changeloading((prevState) => (loading = !prevState));
 			setStart((prevState) => (start = !prevState));
 		}
 	};
@@ -201,14 +203,12 @@ const Withdraw = (props) => {
 			  registry: MainNetwork.Contracts.Registry
 			});
 			await matic.initialize()
-			changeloading((prevState) => (loading = !prevState));
 			let t;
 			let w;
 			let transactionHash = props.txProcess[0].txHash
 			if (props.txProcess[0].currency === 'eth' || props.txProcess[0].currency === 'erc20') {
 				if (props.txProcess[0].currency === 'eth') {
-					console.log('Hash: ',typeof(transactionHash))
-					console.log('Token: ',props.txProcess[0].currency)
+					changeloading((prevState) => (loading = !prevState));
 					matic
 						.withdraw(transactionHash, {
 							from
@@ -229,10 +229,12 @@ const Withdraw = (props) => {
 									setInitxHash((initTxHash = props.txProcess[0].txHash));
 									setExitTxHash((exitTxHash = logs.transactionHash));
 									props.txProcess[0].currency === 'eth' && props.txComplete(exitTxHash, 'Exit Withdraw', 'ETH');
+									changeloading((prevState) => (loading = !prevState));
 									props.txOutProcess();
 								});
 						});
 				} else {
+					changeloading((prevState) => (loading = !prevState));
 					matic
 						.withdraw(transactionHash, {
 							from
@@ -252,11 +254,13 @@ const Withdraw = (props) => {
 									setConfirmTxHash((confirmTxHash = w));
 									setExitTxHash((exitTxHash = logs.transactionHash));
 									props.txProcess[0].currency === 'erc20' && props.txComplete(exitTxHash, 'Exit Withdraw', 'ERC20');
+									changeloading((prevState) => (loading = !prevState));
 									props.txOutProcess();
 								});
 						});
 				}
 			} else if (props.txProcess[0].currency === 'erc721') {
+				changeloading((prevState) => (loading = !prevState));
 				matic.withdrawNFT(transactionHash, { from }).then((logs) => {
 					console.log(logs.transactionHash);
 					w = logs.transactionHash
@@ -272,6 +276,7 @@ const Withdraw = (props) => {
 							setConfirmTxHash((confirmTxHash = w));
 							setExitTxHash((exitTxHash = logs.transactionHash));
 							props.txComplete(exitTxHash, 'Exit Withdraw', 'ERC721');
+							changeloading((prevState) => (loading = !prevState));
 							props.txOutProcess();
 						});
 				});
@@ -345,10 +350,10 @@ const Withdraw = (props) => {
 	
 								<Divider />
 								<CardActions>
-									<Button color="primary" variant="outlined" onClick={InitWithdraw}>
+									<Button color="primary" variant="outlined" onClick={InitWithdraw} disabled={loading}>
 										Withdraw
 									</Button>
-									<Divider />
+
 									{loading && <CircularProgress />}
 								</CardActions>
 							</div>
@@ -371,10 +376,9 @@ const Withdraw = (props) => {
 	
 								<Divider />
 								<CardActions>
-									<Button color="primary" variant="outlined" onClick={InitWithdraw}>
+									<Button color="primary" variant="outlined" onClick={InitWithdraw} disabled={loading}>
 										Withdraw
 									</Button>
-									<Divider />
 									{loading && <CircularProgress />}
 								</CardActions>
 							</div>
@@ -397,10 +401,9 @@ const Withdraw = (props) => {
 	
 								<Divider />
 								<CardActions>
-									<Button color="primary" variant="outlined" onClick={InitWithdraw}>
+									<Button color="primary" variant="outlined" onClick={InitWithdraw} disabled={loading}>
 										Withdraw
 									</Button>
-									<Divider />
 									{loading && <CircularProgress />}
 								</CardActions>
 							</div>
@@ -445,10 +448,10 @@ const Withdraw = (props) => {
 									color="primary"
 									variant="outlined"
 									onClick={ConfWithdraw}
+									disabled={loading}
 								>
 									Confirm Withdraw
 								</Button>
-								<Divider />
 								{loading && <CircularProgress />}
 							</CardActions>
 							{initTxHash !== '' && (

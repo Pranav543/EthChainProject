@@ -241,7 +241,7 @@ const Transfer = (props) => {
 	
 							<Divider />
 							<CardActions>
-								<Button color="primary" variant="outlined" onClick={transfer}>
+								<Button color="primary" variant="outlined" onClick={transfer} disabled={loading}>
 									Transfer WETH
 								</Button>
 	

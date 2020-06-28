@@ -119,7 +119,7 @@ const StateSync = (props) => {
 				<Divider />
 	
 				<CardContent>
-					<Button color="primary" variant="outlined" onClick={handleOpen}>
+					<Button color="primary" variant="outlined" onClick={handleOpen} disabled={loading}>
 						Upload File
 					</Button>
 					<Divider />
