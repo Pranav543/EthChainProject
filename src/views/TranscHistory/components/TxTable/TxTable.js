@@ -56,7 +56,7 @@ const TxTable = (props) => {
 										{tx.method === 'Deposit' && (
 											<TableCell component="th" scope="row">
 												<a
-													href={`https://ropsten.etherscan.io/tx/${tx.txHash}`}
+													href={`https://goerli.etherscan.io/tx/${tx.txHash}`}
 													target="_blank"
 													rel="noopener noreferrer"
 												>
@@ -67,7 +67,7 @@ const TxTable = (props) => {
 										{tx.method === 'Transfer' && (
 											<TableCell component="th" scope="row">
 												<a
-													href={`https://testnetv3-explorer.matic.network/tx/${tx.txHash}/token_transfers`}
+													href={`https://mumbai-explorer.matic.today/tx/${tx.txHash}/token_transfers`}
 													target="_blank"
 													rel="noopener noreferrer"
 												>
@@ -78,7 +78,7 @@ const TxTable = (props) => {
 										{tx.method === 'Confirm Withdraw' && (
 											<TableCell component="th" scope="row">
 												<a
-													href={`https://ropsten.etherscan.io/tx/${tx.txHash}`}
+													href={`https://goerli.etherscan.io/tx/${tx.txHash}`}
 													target="_blank"
 													rel="noopener noreferrer"
 												>
@@ -89,7 +89,7 @@ const TxTable = (props) => {
 										{tx.method === 'Exit Withdraw' && (
 											<TableCell component="th" scope="row">
 												<a
-													href={`https://ropsten.etherscan.io/tx/${tx.txHash}`}
+													href={`https://goerli.etherscan.io/tx/${tx.txHash}`}
 													target="_blank"
 													rel="noopener noreferrer"
 												>
@@ -100,7 +100,7 @@ const TxTable = (props) => {
 										{tx.method === 'Initial Withdraw' && (
 											<TableCell component="th" scope="row">
 												<a
-													href={`https://testnetv3-explorer.matic.network/tx/${tx.txHash}/token_transfers`}
+													href={`https://mumbai-explorer.matic.today/tx/${tx.txHash}/token_transfers`}
 													target="_blank"
 													rel="noopener noreferrer"
 												>

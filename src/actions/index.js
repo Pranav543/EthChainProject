@@ -9,11 +9,12 @@ export const txComplete = (txHash, method, currency) => {
     };
 };
 
-export const txInProcess = (txHash) => {
+export const txInProcess = (txHash,currency) => {
     return {
         type    : 'TX_IN_PROCESS',
         payload : {
-            txHash
+            txHash,
+            currency
         }
     };
 };

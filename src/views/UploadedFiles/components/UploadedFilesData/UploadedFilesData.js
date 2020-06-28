@@ -17,6 +17,8 @@ import {
 	TableContainer
 } from '@material-ui/core';
 
+import Alert from '@material-ui/lab/Alert';
+
 const bs58 = require('bs58');
 
 const Receiver = require('../../../../artifacts/Receiver.json')
@@ -38,10 +40,15 @@ const UploadedFilesData = (props) => {
 
 	useEffect(() => {
 		setLoading(true)
-		window.web3.eth.net.getId().then((result)=>{
-			setChainID(result)
-			getDetails();
-		})
+		try{
+			window.web3.eth.net.getId().then((result)=>{
+				setChainID(result)
+				getDetails();
+			})
+		}
+		catch(err){
+			console.log('again')
+		}
 		setLoading(false)
 	},[]);
 
@@ -116,10 +123,10 @@ const UploadedFilesData = (props) => {
 	}
 	else{
 		return(
-			<div>
-				<h1>change netowork</h1>
-			</div>
-		)
+            <div>
+                <Alert severity="error">Change Network to Matic TestNetv3!!</Alert>
+            </div>
+        );
 	}
 };
 

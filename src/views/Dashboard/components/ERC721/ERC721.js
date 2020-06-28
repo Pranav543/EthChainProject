@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Card, CardContent, Grid, Typography, Avatar } from '@material-ui/core';
-import MoneyIcon from '@material-ui/icons/Money';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,19 +40,24 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Accounts = async () => {
-	const accounts = await window.web3.eth.getAccounts();
-	return accounts[0];
+    try{
+        const accounts = await window.web3.eth.getAccounts();
+    return accounts[0];
+    }
+    catch(err){
+        console.log('again')
+    }
 };
 
-const Budget = props => {
+const ERC721 = props => {
   const { className, ...rest } = props;
 
   const [ amount, setAmount ] = useState("")
 
   const [ from, setFrom ] = useState([]);
 
-  let Matic_ERC721Address = "0x8D5231e0B79edD9331e0CF0d4B9f3F30d05C47A5"
-  let Ropsten_ERC721Address = "0x07d799252cf13c01f602779b4dce24f4e5b08bbd"
+  let Matic_ERC721Address = "0x33FC58F12A56280503b04AC7911D1EceEBcE179c"
+  let Goerli_ERC721Address = "0xfA08B72137eF907dEB3F202a60EfBc610D2f224b"
 
   const classes = useStyles();
 
@@ -66,17 +71,18 @@ const Budget = props => {
         if(window.web3 !== undefined || window.matic !== undefined){
             if(window.chainID !== undefined && from !== []){
               try{
-                if(window.chainID===15001){
-                  console.log(typeof(window.from))
+                if(window.chainID===80001){
                   window.matic.balanceOfERC721(window.from,Matic_ERC721Address,{from:window.from,parent:false}).then(async(result)=>{
-                    console.log(result)
                     setAmount(result)
+                  }).catch((err)=>{
+                    console.log('again')
                   })
                 }
-                else if(window.chainID===3){
-                  window.matic.balanceOfERC721(window.from,Ropsten_ERC721Address,{from:window.from,parent:true}).then(async (result)=>{
-                    console.log(result)
+                else if(window.chainID===5){
+                  window.matic.balanceOfERC721(window.from,Goerli_ERC721Address,{from:window.from,parent:true}).then(async (result)=>{
                     setAmount(result)
+                  }).catch((err)=>{
+                    console.log('again')
                   })
                 }
                 else{
@@ -115,12 +121,12 @@ const Budget = props => {
             >
               ERC721 depositted
             </Typography>
-            <Typography variant="h3">{amount}</Typography>
+            <Typography variant="h2">{amount}</Typography>
           </Grid>
           <Grid item>
-            <Avatar className={classes.avatar}>
-              <MoneyIcon className={classes.icon} />
-            </Avatar>
+          <Avatar className={classes.avatar}>
+							<AttachMoneyIcon className={classes.icon} />
+						</Avatar>
           </Grid>
         </Grid>
       </CardContent>
@@ -128,8 +134,8 @@ const Budget = props => {
   );
 };
 
-Budget.propTypes = {
+ERC721.propTypes = {
   className: PropTypes.string
 };
 
-export default Budget;
+export default ERC721;

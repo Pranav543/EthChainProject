@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { AppBar, Toolbar, Hidden, IconButton } from '@material-ui/core';
+import { AppBar, Toolbar, Hidden, IconButton, Typography } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 
 const useStyles = makeStyles((theme) => ({
@@ -23,22 +23,47 @@ const Topbar = (props) => {
 
 	const classes = useStyles();
 
-	return (
-		<AppBar {...rest} className={clsx(classes.root, className)}>
-			<Toolbar>
+	if(window.web3!==undefined){
+		return (
+			<AppBar {...rest} className={clsx(classes.root, className)}>
+				<Toolbar>
 				<RouterLink to="/">
-					<h1 style={{ color: 'white' }}>EtherMen</h1>
-				</RouterLink>
-				<div className={classes.flexGrow} />
-
-				<Hidden lgUp>
-					<IconButton color="inherit" onClick={onSidebarOpen}>
-						<MenuIcon />
-					</IconButton>
-				</Hidden>
-			</Toolbar>
-		</AppBar>
-	);
+          <img
+            alt="Logo"
+            src="/images/matic.svg"
+          />
+          
+        </RouterLink>
+        <Typography variant="h2" gutterBottom style = {{marginLeft: 5, color: 'white', marginTop: 5}}>DEX</Typography>
+					<div className={classes.flexGrow} />
+	
+					<Hidden lgUp>
+						<IconButton color="inherit" onClick={onSidebarOpen}>
+							<MenuIcon />
+						</IconButton>
+					</Hidden>
+				</Toolbar>
+			</AppBar>
+		);
+	}
+	else{
+		return (
+			<AppBar {...rest} className={clsx(classes.root, className)}>
+				<Toolbar>
+					<RouterLink to="/">
+						<h1 style={{ color: 'white' }}>EtherMen</h1>
+					</RouterLink>
+					<div className={classes.flexGrow} />
+	
+					<Hidden lgUp>
+						<IconButton color="inherit" onClick={onSidebarOpen}>
+							<MenuIcon />
+						</IconButton>
+					</Hidden>
+				</Toolbar>
+			</AppBar>
+		);
+	}
 };
 
 Topbar.propTypes = {

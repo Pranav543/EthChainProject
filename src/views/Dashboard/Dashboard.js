@@ -3,10 +3,11 @@ import { makeStyles } from '@material-ui/styles';
 import { Grid } from '@material-ui/core';
 
 import {
-  Budget,
-  TotalUsers,
-  TasksProgress,
-  TotalProfit
+  Network,
+  ETHER,
+  ERC20,
+  ERC721,
+  Welcome
 } from './components';
 
 const useStyles = makeStyles(theme => ({
@@ -31,7 +32,7 @@ const Dashboard = () => {
           xl={3}
           xs={12}
         >
-          <Budget />
+          <Network />
         </Grid>
         <Grid
           item
@@ -40,7 +41,7 @@ const Dashboard = () => {
           xl={3}
           xs={12}
         >
-          <TotalUsers />
+          <ETHER />
         </Grid>
         <Grid
           item
@@ -49,7 +50,7 @@ const Dashboard = () => {
           xl={3}
           xs={12}
         >
-          <TasksProgress />
+          <ERC20 />
         </Grid>
         <Grid
           item
@@ -58,7 +59,15 @@ const Dashboard = () => {
           xl={3}
           xs={12}
         >
-          <TotalProfit />
+          <ERC721 />
+        </Grid>
+        <Grid
+          item
+          lg={2}
+          md={0}
+          xl={2}
+          xs={0}
+        >
         </Grid>
         <Grid
           item
@@ -67,34 +76,15 @@ const Dashboard = () => {
           xl={9}
           xs={12}
         >
-          
+        <Welcome />
         </Grid>
         <Grid
           item
-          lg={4}
-          md={6}
-          xl={3}
-          xs={12}
-        >
-          
-        </Grid>
-        <Grid
-          item
-          lg={4}
-          md={6}
-          xl={3}
-          xs={12}
-        >
-         
-        </Grid>
-        <Grid
-          item
-          lg={8}
-          md={12}
-          xl={9}
-          xs={12}
-        >
-          
+          lg={2}
+          md={0}
+          xl={2}
+          xs={0}
+        >  
         </Grid>
       </Grid>
     </div>
